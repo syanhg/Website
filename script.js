@@ -389,7 +389,118 @@ function initLeadDemo(rootId, chatScreenId, leadsScreenId, ctaId) {
 }
 
 initLeadDemo("leadDemo", "leadScreenChat", "leadScreenLeads", "leadDemoCta");
-initLeadDemo("caseDemo", "caseScreenChat", "caseScreenLeads", "caseDemoCta");
+
+(function () {
+  const root = document.getElementById("caseDash");
+  if (!root) return;
+
+  const widgets = Array.from(root.querySelectorAll(".case-widget"));
+  const nums = Array.from(root.querySelectorAll(".case-widget-num"));
+  const bars = Array.from(root.querySelectorAll(".case-widget-range-bar"));
+  const hbarFills = Array.from(root.querySelectorAll(".case-widget-hbar-fill"));
+
+  const WIDGET_STAGGER = 200;
+  const COUNT_DURATION = 800;
+  const BAR_DELAY = 200;
+  const BAR_STAGGER = 60;
+  const HBAR_DELAY = 250;
+  const HBAR_STAGGER = 120;
+  const HOLD_DURATION = 3000;
+  const LOOP_GAP = 1400;
+
+  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  let playing = false;
+  let autoplayTimer = null;
+
+  function countUp(el) {
+    const target = Number(el.dataset.value);
+    const decimals = Number(el.dataset.decimals) || 0;
+    const start = performance.now();
+
+    function tick(now) {
+      const progress = Math.min(1, (now - start) / COUNT_DURATION);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      const value = target * eased;
+      el.textContent = decimals ? value.toFixed(decimals) : Math.round(value).toLocaleString();
+      if (progress < 1) requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+  }
+
+  function reset() {
+    widgets.forEach((widget) => widget.classList.remove("is-visible"));
+    nums.forEach((num) => {
+      num.textContent = Number(num.dataset.decimals) ? "0.0" : "0";
+    });
+    bars.forEach((bar) => {
+      bar.style.bottom = "0%";
+      bar.style.height = "0%";
+    });
+    hbarFills.forEach((fill) => (fill.style.width = "0%"));
+  }
+
+  function scheduleAutoplay() {
+    if (reduceMotion) return;
+    clearTimeout(autoplayTimer);
+    autoplayTimer = setTimeout(playSequence, LOOP_GAP);
+  }
+
+  function playSequence() {
+    if (playing) return;
+    playing = true;
+    clearTimeout(autoplayTimer);
+    reset();
+
+    widgets.forEach((widget, i) => {
+      const delay = i * WIDGET_STAGGER;
+      setTimeout(() => {
+        widget.classList.add("is-visible");
+        widget.querySelectorAll(".case-widget-num").forEach(countUp);
+      }, delay);
+    });
+
+    bars.forEach((bar, i) => {
+      setTimeout(() => {
+        bar.style.bottom = `${bar.dataset.bottom}%`;
+        bar.style.height = `${bar.dataset.height}%`;
+      }, BAR_DELAY + i * BAR_STAGGER);
+    });
+
+    hbarFills.forEach((fill, i) => {
+      setTimeout(() => {
+        fill.style.width = `${fill.dataset.width}%`;
+      }, HBAR_DELAY + i * HBAR_STAGGER);
+    });
+
+    const total = WIDGET_STAGGER * widgets.length + Math.max(BAR_DELAY + bars.length * BAR_STAGGER, HBAR_DELAY + hbarFills.length * HBAR_STAGGER);
+
+    setTimeout(() => {
+      playing = false;
+      reset();
+      scheduleAutoplay();
+    }, total + HOLD_DURATION);
+  }
+
+  root.addEventListener("click", () => {
+    if (!playing) playSequence();
+  });
+
+  if (!reduceMotion) {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            playSequence();
+            observer.disconnect();
+          }
+        });
+      },
+      { threshold: 0.4 }
+    );
+    observer.observe(root);
+  }
+})();
 
 (function () {
   const shortcutEls = Array.from(document.querySelectorAll("[data-shortcut]"));
