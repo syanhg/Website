@@ -1,0 +1,1148 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin — HUGRAPH</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --font: "Inter", sans-serif;
+      --bg: #fff;
+      --page-bg: #f5f5f5;
+      --text: #111111;
+      --muted: #9a9a9a;
+      --border: #d8d8d8;
+      --border-dark: #999999;
+      --row-border: #ececec;
+      --hover: #f7f7f7;
+      --danger: #c0392b;
+      --green: #1a7a3a;
+      --green-bg: #edf7f1;
+    }
+
+    body {
+      background: var(--page-bg);
+      color: var(--text);
+      font-family: var(--font);
+      font-size: 15px;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+      min-height: 100vh;
+    }
+
+    /* ---- Login ---- */
+
+    #loginScreen {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    .login-form {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      width: 280px;
+    }
+
+    .login-form input,
+    .login-form button {
+      font-family: var(--font);
+      font-size: 14px;
+      font-weight: 500;
+      padding: 8px 10px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--muted);
+      outline: none;
+      width: 100%;
+      -webkit-appearance: none;
+      appearance: none;
+      border-radius: 4px;
+    }
+
+    .login-form input::placeholder {
+      color: var(--muted);
+    }
+
+    .login-form input:focus {
+      border-color: var(--border-dark);
+      color: var(--text);
+    }
+
+    .login-form button {
+      border-color: var(--border-dark);
+      cursor: pointer;
+      text-align: left;
+      transition: background 0.15s;
+      color: var(--text);
+    }
+
+    .login-form button:hover:not(:disabled) {
+      background: rgba(0,0,0,0.04);
+    }
+
+    .login-form button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .login-error {
+      font-size: 13px;
+      color: var(--danger);
+      min-height: 16px;
+    }
+
+    /* ---- Admin App ---- */
+
+    #adminApp {
+      display: none;
+      background: var(--bg);
+      min-height: 100vh;
+    }
+
+    .top-bar {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: 44px;
+      border-bottom: 1px solid var(--row-border);
+      background: var(--bg);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 28px;
+      z-index: 50;
+    }
+
+    .top-bar-left {
+      font-size: 15px;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      text-transform: uppercase;
+      font-family: var(--font);
+    }
+
+    .top-bar-right {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .top-bar-email {
+      font-size: 13px;
+      color: var(--muted);
+      font-family: var(--font);
+    }
+
+    .top-bar-signout {
+      font-size: 13px;
+      color: var(--muted);
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-family: var(--font);
+      transition: color 0.15s;
+    }
+
+    .top-bar-signout:hover { color: var(--text); }
+
+    .admin-body {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 72px 28px 80px;
+    }
+
+    .posts-header {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      margin-bottom: 24px;
+    }
+
+    .posts-header h1 {
+      font-size: 22px;
+      font-weight: 600;
+      font-family: var(--font);
+    }
+
+    .posts-count {
+      font-size: 13px;
+      color: var(--muted);
+      margin-left: 10px;
+    }
+
+    .new-post-btn {
+      font-size: 14px;
+      font-weight: 500;
+      font-family: var(--font);
+      color: var(--text);
+      background: none;
+      border: 1px solid var(--border-dark);
+      border-radius: 4px;
+      padding: 5px 14px;
+      cursor: pointer;
+      transition: background 0.12s;
+    }
+
+    .new-post-btn:hover { background: var(--hover); }
+
+    /* Posts list */
+
+    .posts-list { border-top: 1px solid var(--row-border); }
+
+    .post-row {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 13px 0;
+      border-bottom: 1px solid var(--row-border);
+    }
+
+    .post-row-title {
+      flex: 1;
+      font-size: 15px;
+      font-weight: 500;
+      font-family: var(--font);
+      color: var(--text);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .post-row-status {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+      font-family: var(--font);
+      padding: 2px 8px;
+      border-radius: 999px;
+      white-space: nowrap;
+    }
+
+    .status-live  { background: var(--green-bg); color: var(--green); }
+    .status-draft { color: var(--muted); background: var(--hover); }
+    .status-featured { background: #f0ebff; color: #5b21b6; }
+
+    .post-row-date {
+      font-size: 13px;
+      color: var(--muted);
+      font-family: var(--font);
+      white-space: nowrap;
+      min-width: 80px;
+      text-align: right;
+    }
+
+    .post-row-actions { display: flex; gap: 2px; flex-shrink: 0; }
+
+    .row-btn {
+      font-size: 13px;
+      font-weight: 500;
+      font-family: var(--font);
+      color: var(--muted);
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 4px 8px;
+      transition: color 0.12s;
+      text-decoration: none;
+    }
+
+    .row-btn:hover { color: var(--text); }
+    .row-btn.del:hover { color: var(--danger); }
+
+    .posts-empty {
+      padding: 48px 0;
+      font-size: 14px;
+      font-family: var(--font);
+      color: var(--muted);
+    }
+
+    /* ---- Editor overlay ---- */
+
+    .overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(255,255,255,0.97);
+      z-index: 200;
+      overflow-y: auto;
+      display: flex;
+      justify-content: center;
+      padding: 48px 24px 80px;
+    }
+
+    .overlay.hidden { display: none; }
+
+    .editor-panel {
+      width: 100%;
+      max-width: 680px;
+    }
+
+    .editor-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 28px;
+    }
+
+    .editor-heading {
+      font-size: 18px;
+      font-weight: 600;
+      font-family: var(--font);
+    }
+
+    .close-btn {
+      font-size: 20px;
+      color: var(--muted);
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-family: var(--font);
+      line-height: 1;
+      padding: 4px;
+      transition: color 0.12s;
+    }
+
+    .close-btn:hover { color: var(--text); }
+
+    .ef { margin-bottom: 16px; }
+
+    .ef label {
+      display: block;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--muted);
+      margin-bottom: 5px;
+      font-family: var(--font);
+    }
+
+    .ef input,
+    .ef textarea {
+      width: 100%;
+      padding: 8px 10px;
+      border: 1px solid var(--border);
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font);
+      font-size: 14px;
+      outline: none;
+      transition: border-color 0.15s;
+      border-radius: 4px;
+    }
+
+    .ef input:focus,
+    .ef textarea:focus { border-color: var(--border-dark); }
+
+    .ef .hint {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 4px;
+      font-family: var(--font);
+    }
+
+    .ef-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    /* Content editor toolbar */
+    .editor-toolbar {
+      display: flex;
+      align-items: center;
+      gap: 2px;
+      padding: 6px 8px;
+      border: 1px solid var(--border);
+      border-bottom: none;
+      border-radius: 4px 4px 0 0;
+      background: var(--hover);
+    }
+
+    .toolbar-btn {
+      font-family: var(--font);
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--muted);
+      background: none;
+      border: 1px solid transparent;
+      padding: 3px 8px;
+      cursor: pointer;
+      border-radius: 3px;
+      transition: background 0.12s, color 0.12s;
+      line-height: 1.4;
+    }
+
+    .toolbar-btn:hover {
+      background: var(--bg);
+      border-color: var(--border);
+      color: var(--text);
+    }
+
+    .toolbar-sep {
+      width: 1px;
+      height: 16px;
+      background: var(--border);
+      margin: 0 4px;
+    }
+
+    /* Content editor */
+    .tab-bar {
+      display: flex;
+      border-bottom: 1px solid var(--row-border);
+    }
+
+    .tab {
+      font-size: 13px;
+      font-weight: 500;
+      font-family: var(--font);
+      color: var(--muted);
+      background: none;
+      border: none;
+      border-bottom: 1px solid transparent;
+      padding: 6px 14px;
+      cursor: pointer;
+      margin-bottom: -1px;
+      transition: color 0.12s;
+    }
+
+    .tab.active { color: var(--text); border-bottom-color: var(--text); }
+
+    .content-area {
+      border: 1px solid var(--border);
+      border-top: none;
+      border-radius: 0 0 4px 4px;
+    }
+
+    .content-area.hidden { display: none; }
+
+    #postContent {
+      width: 100%;
+      min-height: 280px;
+      padding: 14px;
+      border: none;
+      font-family: var(--font);
+      font-size: 14px;
+      line-height: 1.65;
+      resize: vertical;
+      outline: none;
+      color: var(--text);
+      background: var(--bg);
+    }
+
+    #previewPane {
+      padding: 16px;
+      min-height: 280px;
+      font-size: 15px;
+      line-height: 1.75;
+      font-family: var(--font);
+      color: var(--text);
+    }
+
+    #previewPane h2 { font-size: 20px; font-weight: 600; margin: 20px 0 8px; }
+    #previewPane h3 { font-size: 17px; font-weight: 600; margin: 16px 0 6px; }
+    #previewPane p { margin-bottom: 14px; }
+    #previewPane ul, #previewPane ol { margin-bottom: 14px; padding-left: 20px; }
+    #previewPane blockquote { border-left: 2px solid var(--border); padding-left: 14px; color: var(--muted); margin: 16px 0; font-style: italic; }
+    #previewPane code { font-size: 12px; background: var(--hover); padding: 1px 5px; border-radius: 3px; }
+    #previewPane pre { background: var(--hover); padding: 14px; margin-bottom: 14px; overflow-x: auto; border-radius: 6px; }
+    #previewPane pre code { background: none; padding: 0; }
+
+    /* Cover upload */
+    .cover-area {
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .cover-empty {
+      display: flex;
+      align-items: center;
+      padding: 12px;
+      background: var(--hover);
+      cursor: pointer;
+      position: relative;
+      transition: background 0.12s;
+    }
+
+    .cover-empty:hover { background: #efefef; }
+
+    .cover-empty input[type="file"] {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      cursor: pointer;
+      width: 100%;
+      height: 100%;
+      padding: 0;
+      border: none;
+    }
+
+    .cover-empty-label {
+      font-size: 13px;
+      color: var(--muted);
+      font-family: var(--font);
+      pointer-events: none;
+    }
+
+    .cover-preview-wrap { position: relative; display: none; }
+
+    .cover-preview-img {
+      width: 100%;
+      height: 160px;
+      object-fit: cover;
+      display: block;
+    }
+
+    .cover-preview-btns {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      display: flex;
+      gap: 6px;
+    }
+
+    .cover-btn {
+      background: rgba(255,255,255,0.92);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      font-family: var(--font);
+      font-size: 12px;
+      font-weight: 500;
+      padding: 3px 10px;
+      cursor: pointer;
+      color: var(--text);
+    }
+
+    .cover-btn.del { color: var(--danger); }
+
+    .cover-change-wrap { position: relative; overflow: hidden; }
+
+    .cover-change-wrap input[type="file"] {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      cursor: pointer;
+      width: 100%;
+      height: 100%;
+      padding: 0;
+      border: none;
+    }
+
+    /* Editor footer */
+    .editor-footer {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      margin-top: 20px;
+      padding-top: 16px;
+      border-top: 1px solid var(--row-border);
+    }
+
+    .publish-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .publish-row input[type="checkbox"] {
+      width: 13px;
+      height: 13px;
+      cursor: pointer;
+      accent-color: var(--text);
+    }
+
+    .publish-row label {
+      font-size: 14px;
+      font-family: var(--font);
+      color: var(--text);
+      cursor: pointer;
+    }
+
+    .editor-actions { display: flex; gap: 8px; }
+
+    .action-btn {
+      font-size: 14px;
+      font-weight: 500;
+      font-family: var(--font);
+      padding: 7px 18px;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      background: var(--bg);
+      color: var(--text);
+      cursor: pointer;
+      transition: background 0.12s;
+    }
+
+    .action-btn:hover:not(:disabled) { background: var(--hover); }
+
+    .action-btn.primary {
+      background: var(--text);
+      color: #fff;
+      border-color: var(--text);
+    }
+
+    .action-btn.primary:hover:not(:disabled) { opacity: 0.82; }
+    .action-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    .form-error {
+      font-size: 13px;
+      font-family: var(--font);
+      color: var(--danger);
+      margin-top: 10px;
+    }
+
+    /* Delete overlay */
+    .delete-panel {
+      width: 100%;
+      max-width: 360px;
+      padding-top: 80px;
+    }
+
+    .delete-panel h3 {
+      font-size: 16px;
+      font-weight: 600;
+      font-family: var(--font);
+      margin-bottom: 10px;
+    }
+
+    .delete-panel p {
+      font-size: 14px;
+      font-family: var(--font);
+      color: #555;
+      margin-bottom: 20px;
+      line-height: 1.6;
+    }
+
+    .delete-actions { display: flex; gap: 8px; }
+
+    @media (max-width: 600px) {
+      .admin-body { padding: 68px 20px 60px; }
+      .top-bar { padding: 0 20px; }
+      .ef-row { grid-template-columns: 1fr; }
+      .post-row-date { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Login -->
+  <div id="loginScreen">
+    <form class="login-form" id="loginForm" novalidate>
+      <input type="email" id="loginEmail" autocomplete="email" placeholder="email" />
+      <input type="password" id="loginPassword" autocomplete="current-password" placeholder="password" />
+      <button type="submit" id="loginBtn">sign in</button>
+      <div class="login-error" id="loginError"></div>
+    </form>
+  </div>
+
+  <!-- Admin app -->
+  <div id="adminApp">
+
+    <div class="top-bar">
+      <div class="top-bar-left">HUGRAPH</div>
+      <div class="top-bar-right">
+        <span class="top-bar-email" id="adminUserEmail"></span>
+        <button class="top-bar-signout" id="signOutBtn">sign out</button>
+      </div>
+    </div>
+
+    <div class="admin-body">
+      <div class="posts-header">
+        <div style="display:flex;align-items:baseline;gap:10px;">
+          <h1>Posts</h1>
+          <span class="posts-count" id="postCount"></span>
+        </div>
+        <button class="new-post-btn" id="newPostBtn">+ new post</button>
+      </div>
+      <div id="postsContainer" class="posts-list"></div>
+    </div>
+
+  </div>
+
+  <!-- Editor overlay -->
+  <div class="overlay hidden" id="editorOverlay">
+    <div class="editor-panel">
+      <div class="editor-top">
+        <div class="editor-heading" id="editorHeading">New post</div>
+        <div style="display:flex;align-items:center;gap:20px;">
+          <div class="publish-row">
+            <input type="checkbox" id="postFeatured" />
+            <label for="postFeatured">Featured</label>
+          </div>
+          <div class="publish-row">
+            <input type="checkbox" id="postPublished" />
+            <label for="postPublished" id="publishLabel">Draft</label>
+          </div>
+          <button class="close-btn" id="closeEditorBtn">×</button>
+        </div>
+      </div>
+
+      <form id="postForm" novalidate>
+        <input type="hidden" id="postId" />
+
+        <div class="ef-row">
+          <div class="ef">
+            <label>Title</label>
+            <input type="text" id="postTitle" placeholder="Post title" />
+          </div>
+          <div class="ef">
+            <label>Slug</label>
+            <input type="text" id="postSlug" placeholder="post-slug" />
+          </div>
+        </div>
+
+        <div class="ef-row">
+          <div class="ef">
+            <label>Excerpt</label>
+            <input type="text" id="postExcerpt" placeholder="Short summary for the listing page" />
+          </div>
+          <div class="ef">
+            <label>Category <span style="font-weight:400;color:var(--muted)">· optional</span></label>
+            <input type="text" id="postCategory" placeholder="e.g. Company" />
+          </div>
+        </div>
+
+        <div class="ef">
+          <label>Cover image · PNG or JPG, optional</label>
+          <input type="hidden" id="postCoverImage" />
+          <div class="cover-area">
+            <div class="cover-empty" id="coverUploadEmpty">
+              <input type="file" id="postCoverFile" accept="image/png,image/jpeg,image/jpg" />
+              <span class="cover-empty-label">Click to upload</span>
+            </div>
+            <div class="cover-preview-wrap" id="coverPreviewWrap">
+              <img class="cover-preview-img" id="coverPreviewImg" src="" alt="" />
+              <div class="cover-preview-btns">
+                <div class="cover-change-wrap">
+                  <span class="cover-btn">Change</span>
+                  <input type="file" id="postCoverFileChange" accept="image/png,image/jpeg,image/jpg" />
+                </div>
+                <button type="button" class="cover-btn del" id="coverRemoveBtn">Remove</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="ef">
+          <label>Content · Markdown</label>
+          <div class="editor-toolbar">
+            <button type="button" class="toolbar-btn" onclick="insertMd('# ', '')">H1</button>
+            <button type="button" class="toolbar-btn" onclick="insertMd('## ', '')">H2</button>
+            <button type="button" class="toolbar-btn" onclick="insertMd('### ', '')">H3</button>
+            <div class="toolbar-sep"></div>
+            <button type="button" class="toolbar-btn" onclick="insertMd('**', '**')"><b>B</b></button>
+            <button type="button" class="toolbar-btn" onclick="insertMd('*', '*')"><i>I</i></button>
+            <div class="toolbar-sep"></div>
+            <button type="button" class="toolbar-btn" onclick="insertMd('- ', '')">List</button>
+            <div class="toolbar-sep"></div>
+            <button type="button" class="toolbar-btn" onclick="insertChip()" style="background:#f0f0f0;border-color:#ddd;color:#555;border-radius:3px;padding:1px 7px;">Chip</button>
+            <div class="toolbar-sep"></div>
+            <button type="button" class="toolbar-btn" id="contentImgBtn" onclick="document.getElementById('contentImageFile').click()">Image</button>
+            <input type="file" id="contentImageFile" accept="image/png,image/jpeg,image/jpg,image/webp,image/gif" style="display:none;" />
+          </div>
+          <div class="tab-bar">
+            <button type="button" class="tab active" id="tabWrite" onclick="switchTab('write')">Write</button>
+            <button type="button" class="tab" id="tabPreview" onclick="switchTab('preview')">Preview</button>
+          </div>
+          <div class="content-area" id="writePane">
+            <textarea id="postContent" placeholder="Write in Markdown…"></textarea>
+          </div>
+          <div class="content-area hidden" id="previewPane"></div>
+        </div>
+
+        <div class="form-error" id="postFormError"></div>
+
+        <div class="editor-footer">
+          <div class="editor-actions">
+            <button type="button" class="action-btn" id="cancelEditorBtn">Cancel</button>
+            <button type="submit" class="action-btn primary" id="savePostBtn">Save</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Delete overlay -->
+  <div class="overlay hidden" id="deleteOverlay">
+    <div class="delete-panel">
+      <h3>Delete post</h3>
+      <p>Delete <strong id="deletePostTitle"></strong>? This cannot be undone.</p>
+      <div class="delete-actions">
+        <button class="action-btn" id="cancelDeleteBtn">Cancel</button>
+        <button class="action-btn primary" id="confirmDeleteBtn" style="background:var(--danger);border-color:var(--danger);">Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/marked@9/marked.min.js"></script>
+  <script>
+    const { createClient } = supabase;
+    // TODO: replace with your own Supabase project's URL and anon/publishable key
+    const db = createClient(
+      'https://khsnsmciuqwpnwnzuenl.supabase.co',
+      'sb_publishable_kq2wTAegxdNVrV_MTAeCmw_zCvI3yEL'
+    );
+
+    let allPosts = [];
+    let deleteTargetId = null;
+    let pendingCoverFile = null;
+
+    // ---- Toolbar ----
+
+    function insertChip() {
+      const ta = document.getElementById('postContent');
+      const start = ta.selectionStart;
+      const end = ta.selectionEnd;
+      const selected = ta.value.slice(start, end) || 'label';
+      const replacement = `<span class="chip">${selected}</span>`;
+      ta.setRangeText(replacement, start, end, 'end');
+      ta.focus();
+    }
+
+    function insertMd(before, after) {
+      const ta = document.getElementById('postContent');
+      const start = ta.selectionStart;
+      const end = ta.selectionEnd;
+      const selected = ta.value.slice(start, end);
+      const replacement = before + (selected || 'text') + after;
+      ta.setRangeText(replacement, start, end, 'select');
+      if (!selected) {
+        ta.setSelectionRange(start + before.length, start + before.length + 4);
+      }
+      ta.focus();
+    }
+
+    // ---- Cover upload ----
+
+    function setupCoverUpload() {
+      document.getElementById('postCoverFile').addEventListener('change', e => {
+        if (e.target.files[0]) selectCoverFile(e.target.files[0]);
+      });
+      document.getElementById('postCoverFileChange').addEventListener('change', e => {
+        if (e.target.files[0]) selectCoverFile(e.target.files[0]);
+      });
+      document.getElementById('coverRemoveBtn').addEventListener('click', clearCover);
+    }
+
+    function selectCoverFile(file) {
+      pendingCoverFile = file;
+      const reader = new FileReader();
+      reader.onload = e => showCoverPreview(e.target.result);
+      reader.readAsDataURL(file);
+    }
+
+    function showCoverPreview(src) {
+      document.getElementById('coverUploadEmpty').style.display = 'none';
+      document.getElementById('coverPreviewWrap').style.display = 'block';
+      document.getElementById('coverPreviewImg').src = src;
+    }
+
+    function clearCover() {
+      pendingCoverFile = null;
+      document.getElementById('postCoverImage').value = '';
+      document.getElementById('coverUploadEmpty').style.display = 'flex';
+      document.getElementById('coverPreviewWrap').style.display = 'none';
+      document.getElementById('coverPreviewImg').src = '';
+      document.getElementById('postCoverFile').value = '';
+    }
+
+    function setCover(url) {
+      url ? (document.getElementById('postCoverImage').value = url, showCoverPreview(url)) : clearCover();
+    }
+
+    // ---- Content image upload ----
+
+    document.getElementById('contentImageFile').addEventListener('change', async e => {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const btn = document.getElementById('contentImgBtn');
+      btn.disabled = true;
+      btn.textContent = '…';
+
+      const ext = file.name.split('.').pop().toLowerCase();
+      const filename = `content/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+
+      const { error } = await db.storage
+        .from('blog-covers')
+        .upload(filename, file, { contentType: file.type, upsert: false });
+
+      btn.disabled = false;
+      btn.textContent = 'Image';
+      e.target.value = '';
+
+      if (error) { alert('Upload failed: ' + error.message); return; }
+
+      const url = db.storage.from('blog-covers').getPublicUrl(filename).data.publicUrl;
+      const ta = document.getElementById('postContent');
+      const pos = ta.selectionStart;
+      const insertion = `\n![image](${url})\n`;
+      ta.setRangeText(insertion, pos, pos, 'end');
+      ta.focus();
+    });
+
+    // ---- Auth ----
+
+    async function init() {
+      const { data: { session } } = await db.auth.getSession();
+      if (session) showAdmin(session.user);
+    }
+
+    db.auth.onAuthStateChange((event, session) => {
+      if (event === 'SIGNED_IN') showAdmin(session.user);
+      else if (event === 'SIGNED_OUT') showLogin();
+    });
+
+    function showAdmin(user) {
+      document.getElementById('loginScreen').style.display = 'none';
+      document.getElementById('adminApp').style.display = 'block';
+      document.getElementById('adminUserEmail').textContent = user.email;
+      loadPosts();
+    }
+
+    function showLogin() {
+      document.getElementById('loginScreen').style.display = 'flex';
+      document.getElementById('adminApp').style.display = 'none';
+    }
+
+    document.getElementById('loginForm').addEventListener('submit', async e => {
+      e.preventDefault();
+      const btn = document.getElementById('loginBtn');
+      const errorEl = document.getElementById('loginError');
+      errorEl.textContent = '';
+      btn.disabled = true;
+      btn.textContent = 'signing in…';
+      const { error } = await db.auth.signInWithPassword({
+        email: document.getElementById('loginEmail').value.trim(),
+        password: document.getElementById('loginPassword').value,
+      });
+      if (error) {
+        errorEl.textContent = error.message;
+        btn.disabled = false;
+        btn.textContent = 'sign in';
+      }
+    });
+
+    document.getElementById('signOutBtn').addEventListener('click', () => db.auth.signOut());
+
+    // ---- Posts ----
+
+    function fmtDate(str) {
+      if (!str) return '';
+      const d = new Date(str);
+      return `${d.getMonth()+1}/${d.getDate()}/${String(d.getFullYear()).slice(2)}`;
+    }
+
+    async function loadPosts() {
+      const container = document.getElementById('postsContainer');
+      container.innerHTML = '<div class="posts-empty">Loading…</div>';
+
+      const { data: posts, error } = await db
+        .from('blog_posts').select('*').order('created_at', { ascending: false });
+
+      if (error) { container.innerHTML = '<div class="posts-empty">Failed to load.</div>'; return; }
+
+      allPosts = posts || [];
+      const pub = allPosts.filter(p => p.published).length;
+      document.getElementById('postCount').textContent =
+        allPosts.length ? `${allPosts.length} posts · ${pub} live` : '';
+
+      if (!allPosts.length) {
+        container.innerHTML = '<div class="posts-empty">No posts yet.</div>';
+        return;
+      }
+
+      container.innerHTML = allPosts.map(p => {
+        const isFeatured = p.featured;
+        const statusHtml = isFeatured
+          ? `<div class="post-row-status status-featured">Featured</div>`
+          : `<div class="post-row-status ${p.published ? 'status-live' : 'status-draft'}">${p.published ? 'Live' : 'Draft'}</div>`;
+        return `
+        <div class="post-row">
+          <div class="post-row-title">${escHtml(p.title)}</div>
+          ${statusHtml}
+          <div class="post-row-date">${fmtDate(p.published_at || p.created_at)}</div>
+          <div class="post-row-actions">
+            <a href="../blog-post.html?slug=${encodeURIComponent(p.slug)}" target="_blank" class="row-btn">↗</a>
+            <button class="row-btn" onclick="openEditor('${p.id}')">Edit</button>
+            <button class="row-btn del" onclick="openDelete('${p.id}','${escAttr(p.title)}')">Delete</button>
+          </div>
+        </div>`;
+      }).join('');
+    }
+
+    // ---- Editor ----
+
+    function openEditor(postId) {
+      const post = postId ? allPosts.find(p => p.id === postId) : null;
+      document.getElementById('editorHeading').textContent = post ? 'Edit post' : 'New post';
+      document.getElementById('postId').value = post?.id ?? '';
+      document.getElementById('postTitle').value = post?.title ?? '';
+      document.getElementById('postSlug').value = post?.slug ?? '';
+      document.getElementById('postSlug').dataset.manual = post ? 'true' : '';
+      document.getElementById('postExcerpt').value = post?.excerpt ?? '';
+      document.getElementById('postCategory').value = post?.category ?? '';
+      pendingCoverFile = null;
+      setCover(post?.cover_image_url ?? '');
+      document.getElementById('postContent').value = post?.content ?? '';
+      document.getElementById('postPublished').checked = post?.published ?? false;
+      document.getElementById('postFeatured').checked = post?.featured ?? false;
+      document.getElementById('postFormError').textContent = '';
+      document.getElementById('savePostBtn').textContent = 'Save';
+      document.getElementById('savePostBtn').disabled = false;
+      updatePublishLabel();
+      switchTab('write');
+      document.getElementById('editorOverlay').classList.remove('hidden');
+    }
+
+    function closeEditor() {
+      document.getElementById('editorOverlay').classList.add('hidden');
+    }
+
+    document.getElementById('newPostBtn').addEventListener('click', () => openEditor(null));
+    document.getElementById('closeEditorBtn').addEventListener('click', closeEditor);
+    document.getElementById('cancelEditorBtn').addEventListener('click', closeEditor);
+
+    document.getElementById('postTitle').addEventListener('input', e => {
+      const sf = document.getElementById('postSlug');
+      if (!sf.dataset.manual) sf.value = toSlug(e.target.value);
+    });
+    document.getElementById('postSlug').addEventListener('input', () => {
+      document.getElementById('postSlug').dataset.manual = 'true';
+    });
+    document.getElementById('postPublished').addEventListener('change', updatePublishLabel);
+
+    function updatePublishLabel() {
+      document.getElementById('publishLabel').textContent =
+        document.getElementById('postPublished').checked ? 'Publish' : 'Draft';
+    }
+
+    function toSlug(s) {
+      return s.toLowerCase().replace(/[^a-z0-9\s-]/g,'').trim().replace(/\s+/g,'-').replace(/-+/g,'-');
+    }
+
+    function switchTab(tab) {
+      const isWrite = tab === 'write';
+      document.getElementById('writePane').classList.toggle('hidden', !isWrite);
+      document.getElementById('previewPane').classList.toggle('hidden', isWrite);
+      document.getElementById('tabWrite').classList.toggle('active', isWrite);
+      document.getElementById('tabPreview').classList.toggle('active', !isWrite);
+      if (!isWrite) {
+        document.getElementById('previewPane').innerHTML =
+          marked.parse(document.getElementById('postContent').value || '_Nothing to preview._');
+      }
+    }
+
+    document.getElementById('postForm').addEventListener('submit', async e => {
+      e.preventDefault();
+      const id = document.getElementById('postId').value;
+      const title = document.getElementById('postTitle').value.trim();
+      const slug  = document.getElementById('postSlug').value.trim();
+      const excerpt = document.getElementById('postExcerpt').value.trim();
+      const category = document.getElementById('postCategory').value.trim() || null;
+      let cover_image_url = document.getElementById('postCoverImage').value.trim() || null;
+      const content = document.getElementById('postContent').value;
+      const published = document.getElementById('postPublished').checked;
+      const featured = document.getElementById('postFeatured').checked;
+      const errorEl = document.getElementById('postFormError');
+      const btn = document.getElementById('savePostBtn');
+
+      errorEl.textContent = '';
+      if (!title) { errorEl.textContent = 'Title is required.'; return; }
+      if (!slug)  { errorEl.textContent = 'Slug is required.';  return; }
+
+      btn.disabled = true;
+
+      if (pendingCoverFile) {
+        btn.textContent = 'Uploading…';
+        const ext = pendingCoverFile.name.split('.').pop().toLowerCase();
+        const filename = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+        const { error: upErr } = await db.storage
+          .from('blog-covers')
+          .upload(filename, pendingCoverFile, { contentType: pendingCoverFile.type, upsert: false });
+        if (upErr) {
+          errorEl.textContent = 'Upload failed: ' + upErr.message;
+          btn.disabled = false; btn.textContent = 'Save'; return;
+        }
+        cover_image_url = db.storage.from('blog-covers').getPublicUrl(filename).data.publicUrl;
+        pendingCoverFile = null;
+      }
+
+      btn.textContent = 'Saving…';
+
+      // If marking as featured, unset featured on all other posts first
+      if (featured) {
+        await db.from('blog_posts').update({ featured: false }).neq('id', id || '00000000-0000-0000-0000-000000000000');
+      }
+
+      // Preserve original published_at when editing an already-published post
+      const originalPost = id ? allPosts.find(p => p.id === id) : null;
+      const wasPublished = originalPost?.published ?? false;
+      const published_at = published
+        ? (wasPublished ? originalPost.published_at : new Date().toISOString())
+        : null;
+
+      const payload = { title, slug, excerpt: excerpt || null, category, cover_image_url, content, published, published_at, featured };
+      const { error } = id
+        ? await db.from('blog_posts').update(payload).eq('id', id)
+        : await db.from('blog_posts').insert(payload);
+
+      if (error) {
+        errorEl.textContent = error.message;
+        btn.disabled = false; btn.textContent = 'Save'; return;
+      }
+      closeEditor();
+      await loadPosts();
+    });
+
+    // ---- Delete ----
+
+    function openDelete(id, title) {
+      deleteTargetId = id;
+      document.getElementById('deletePostTitle').textContent = `"${title}"`;
+      document.getElementById('deleteOverlay').classList.remove('hidden');
+    }
+
+    function closeDelete() {
+      deleteTargetId = null;
+      document.getElementById('deleteOverlay').classList.add('hidden');
+    }
+
+    document.getElementById('cancelDeleteBtn').addEventListener('click', closeDelete);
+    document.getElementById('confirmDeleteBtn').addEventListener('click', async () => {
+      if (!deleteTargetId) return;
+      const btn = document.getElementById('confirmDeleteBtn');
+      btn.disabled = true; btn.textContent = 'Deleting…';
+      const { error } = await db.from('blog_posts').delete().eq('id', deleteTargetId);
+      if (error) { alert(error.message); btn.disabled = false; btn.textContent = 'Delete'; return; }
+      closeDelete();
+      await loadPosts();
+    });
+
+    document.getElementById('editorOverlay').addEventListener('click', e => {
+      if (e.target === e.currentTarget) closeEditor();
+    });
+    document.getElementById('deleteOverlay').addEventListener('click', e => {
+      if (e.target === e.currentTarget) closeDelete();
+    });
+
+    function escHtml(s) {
+      return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+    function escAttr(s) { return String(s).replace(/'/g,"\\'"); }
+
+    marked.use({ breaks: true });
+    setupCoverUpload();
+    init();
+  </script>
+
+</body>
+</html>

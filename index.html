@@ -11,11 +11,11 @@
 </head>
 <body>
   <header class="site-header">
-    <div class="logo">HUGRAPH</div>
+    <a href="index.html" class="logo">HUGRAPH</a>
     <div class="header-right">
       <nav class="nav-links">
-        <a href="#">Home</a>
-        <a href="#">Blog</a>
+        <a href="index.html">Home</a>
+        <a href="blog.html">Blog</a>
       </nav>
       <a href="#" class="contact-btn">
         Contact
@@ -104,37 +104,8 @@
       <span class="blog-chip">Latest</span>
       <h2 class="blog-title">Blog and Updates</h2>
     </div>
-    <div class="blog-scroll">
-      <a href="#" class="blog-card">
-        <div class="blog-card-image"></div>
-        <p class="blog-card-date">Coming soon</p>
-        <h3 class="blog-card-title">Blog post title placeholder</h3>
-        <p class="blog-card-excerpt">A short placeholder excerpt describing what this post will cover.</p>
-      </a>
-      <a href="#" class="blog-card">
-        <div class="blog-card-image"></div>
-        <p class="blog-card-date">Coming soon</p>
-        <h3 class="blog-card-title">Blog post title placeholder</h3>
-        <p class="blog-card-excerpt">A short placeholder excerpt describing what this post will cover.</p>
-      </a>
-      <a href="#" class="blog-card">
-        <div class="blog-card-image"></div>
-        <p class="blog-card-date">Coming soon</p>
-        <h3 class="blog-card-title">Blog post title placeholder</h3>
-        <p class="blog-card-excerpt">A short placeholder excerpt describing what this post will cover.</p>
-      </a>
-      <a href="#" class="blog-card">
-        <div class="blog-card-image"></div>
-        <p class="blog-card-date">Coming soon</p>
-        <h3 class="blog-card-title">Blog post title placeholder</h3>
-        <p class="blog-card-excerpt">A short placeholder excerpt describing what this post will cover.</p>
-      </a>
-      <a href="#" class="blog-card">
-        <div class="blog-card-image"></div>
-        <p class="blog-card-date">Coming soon</p>
-        <h3 class="blog-card-title">Blog post title placeholder</h3>
-        <p class="blog-card-excerpt">A short placeholder excerpt describing what this post will cover.</p>
-      </a>
+    <div class="blog-scroll" id="blogScroll">
+      <p class="blog-scroll-empty" id="blogScrollEmpty">No posts yet.</p>
     </div>
   </section>
 
@@ -147,8 +118,8 @@
       <div class="footer-links">
         <div class="footer-col">
           <p class="footer-col-title">Company</p>
-          <a href="#">Home</a>
-          <a href="#">Blog</a>
+          <a href="index.html">Home</a>
+          <a href="blog.html">Blog</a>
           <a href="#">Contact</a>
         </div>
         <div class="footer-col">
@@ -191,6 +162,56 @@
     </div>
   </footer>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+  <script>
+    const { createClient } = supabase;
+    const db = createClient(
+      'https://khsnsmciuqwpnwnzuenl.supabase.co',
+      'sb_publishable_kq2wTAegxdNVrV_MTAeCmw_zCvI3yEL'
+    );
+
+    function formatBlogDate(str) {
+      const d = new Date(str);
+      const mm = String(d.getMonth() + 1).padStart(2, '0');
+      const dd = String(d.getDate()).padStart(2, '0');
+      const yyyy = d.getFullYear();
+      return `[${mm}.${dd}.${yyyy}]`;
+    }
+
+    function homeBlogCardHtml(post) {
+      const url = `blog-post.html?slug=${encodeURIComponent(post.slug)}`;
+      const date = formatBlogDate(post.published_at || post.created_at);
+      const img = post.cover_image_url
+        ? `<div class="blog-card-image" style="background-image:url('${post.cover_image_url}');background-size:cover;background-position:center;"></div>`
+        : `<div class="blog-card-image"></div>`;
+      const excerpt = post.excerpt ? `<p class="blog-card-excerpt">${post.excerpt}</p>` : '';
+      return `
+        <a href="${url}" class="blog-card">
+          ${img}
+          <p class="blog-card-date">${date}</p>
+          <h3 class="blog-card-title">${post.title}</h3>
+          ${excerpt}
+        </a>`;
+    }
+
+    async function loadHomeBlogPreview() {
+      const container = document.getElementById('blogScroll');
+      if (!container) return;
+
+      const { data: posts, error } = await db
+        .from('blog_posts')
+        .select('title, slug, excerpt, cover_image_url, published_at, created_at')
+        .eq('published', true)
+        .order('created_at', { ascending: false })
+        .limit(6);
+
+      if (error || !posts || posts.length === 0) return;
+
+      container.innerHTML = posts.map(homeBlogCardHtml).join('');
+    }
+
+    loadHomeBlogPreview();
+  </script>
   <script src="script.js"></script>
 </body>
 </html>

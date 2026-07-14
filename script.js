@@ -27,6 +27,8 @@
     radius = size / 2 - 48;
   }
 
+  let lastMotionBlur = -1;
+
   function tick(time) {
     if (lastTime === null) lastTime = time;
     const dt = Math.min((time - lastTime) / 1000, 0.05);
@@ -35,7 +37,14 @@
     currentSpeed += (targetSpeed - currentSpeed) * Math.min(1, dt * 1.6);
     angle = (angle + currentSpeed * dt) % 360;
 
-    const motionBlur = Math.min(3.5, currentSpeed / 45);
+    // blur() forces a repaint (not just a cheap compositor transform), so
+    // only touch the filter string when the value has actually moved —
+    // reassigning an unchanged filter every frame was repainting all 8
+    // avatars 60x/sec even while speed was steady between level changes.
+    const motionBlurRaw = Math.min(3.5, currentSpeed / 45);
+    const motionBlur = Math.round(motionBlurRaw * 20) / 20;
+    const blurChanged = motionBlur !== lastMotionBlur;
+    if (blurChanged) lastMotionBlur = motionBlur;
 
     for (let i = 0; i < count; i++) {
       const baseAngle = (360 / count) * i;
@@ -45,7 +54,9 @@
 
       slots[i].style.transform = `translate(${x}px, ${y}px)`;
       avatars[i].style.transform = `rotate(${-angle}deg)`;
-      avatars[i].style.filter = `drop-shadow(0 8px 18px rgba(0,0,0,0.12)) blur(${motionBlur}px)`;
+      if (blurChanged) {
+        avatars[i].style.filter = `drop-shadow(0 8px 18px rgba(0,0,0,0.12)) blur(${motionBlur}px)`;
+      }
     }
 
     requestAnimationFrame(tick);

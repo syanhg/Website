@@ -1,0 +1,580 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Blog — HUGRAPH</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    .blog-page {
+      padding-top: 96px;
+      min-height: 100vh;
+    }
+
+    .blog-inner {
+      width: 100%;
+      padding: 64px 48px 120px;
+    }
+
+    /* Post grid */
+    .posts-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 40px 32px;
+    }
+
+    .post-card {
+      text-decoration: none;
+      color: inherit;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .card-img-wrap {
+      width: 100%;
+      height: 200px;
+      overflow: hidden;
+      margin-bottom: 20px;
+      background: #f5f5f5;
+      flex-shrink: 0;
+      border-radius: 12px;
+    }
+
+    .card-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+      display: block;
+      transition: transform 0.4s ease;
+    }
+
+    .post-card:hover .card-img {
+      transform: scale(1.03);
+    }
+
+    .card-img-placeholder {
+      width: 100%;
+      height: 100%;
+      background: #f5f5f5;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .card-date {
+      font-family: "Inter", sans-serif;
+      font-size: 12px;
+      font-weight: 500;
+      color: #9a9a9a;
+      text-align: center;
+      margin-bottom: 12px;
+      letter-spacing: 0.02em;
+    }
+
+    .card-title {
+      font-family: "Inter", sans-serif;
+      font-size: clamp(16px, 1.4vw, 18px);
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      line-height: 1.3;
+      color: #111111;
+      text-align: center;
+      transition: opacity 0.15s ease;
+    }
+
+    .post-card:hover .card-title {
+      opacity: 0.6;
+    }
+
+    /* Filter + search bar */
+    .blog-controls {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 40px;
+    }
+
+    .filter-tabs {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      position: relative;
+    }
+
+    .filter-slider {
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 100%;
+      border-radius: 6px;
+      border: 1px solid #ececec;
+      background: #ffffff;
+      pointer-events: none;
+      transition: left 0.28s cubic-bezier(0.4, 0, 0.2, 1), width 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .filter-btn {
+      font-family: "Inter", sans-serif;
+      font-size: 14px;
+      font-weight: 500;
+      color: #111111;
+      background: none;
+      border: 1px solid transparent;
+      padding: 4px 12px;
+      cursor: pointer;
+      border-radius: 6px;
+      position: relative;
+      z-index: 1;
+      transition: color 0.15s;
+    }
+
+    .filter-btn:not(.active):hover {
+      color: #9a9a9a;
+    }
+
+    .search-wrap {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: #f0f0f0;
+      border-radius: 6px;
+      padding: 0 12px;
+      height: 30px;
+      width: 220px;
+    }
+
+    .search-icon {
+      color: #9a9a9a;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+    }
+
+    .blog-search {
+      font-family: "Inter", sans-serif;
+      font-size: 13px;
+      color: #111111;
+      background: none;
+      border: none;
+      outline: none;
+      flex: 1;
+      min-width: 0;
+    }
+
+    .blog-search::placeholder {
+      color: #9a9a9a;
+    }
+
+    /* States */
+    .posts-empty {
+      font-family: "Inter", sans-serif;
+      font-size: 13px;
+      color: #9a9a9a;
+      padding: 80px 0;
+      text-align: center;
+    }
+
+    .posts-loading {
+      font-family: "Inter", sans-serif;
+      font-size: 11px;
+      font-weight: 500;
+      color: #9a9a9a;
+      letter-spacing: 0.06em;
+      padding: 80px 0;
+    }
+
+    /* Featured post */
+    .featured-post {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 56px;
+      align-items: center;
+      margin-bottom: 72px;
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .featured-img-wrap {
+      width: 100%;
+      aspect-ratio: 16 / 10;
+      overflow: hidden;
+      border-radius: 12px;
+      background: #f5f5f5;
+      flex-shrink: 0;
+    }
+
+    .featured-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+      display: block;
+      transition: transform 0.5s ease;
+    }
+
+    .featured-post:hover .featured-img {
+      transform: scale(1.03);
+    }
+
+    .featured-img-placeholder {
+      width: 100%;
+      height: 100%;
+      background: #f5f5f5;
+    }
+
+    .featured-text {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .featured-category {
+      display: inline-block;
+      align-self: flex-start;
+      font-family: "Inter", sans-serif;
+      font-size: 11px;
+      font-weight: 500;
+      color: #9a9a9a;
+      background: #f0f0f0;
+      border-radius: 2.5px;
+      padding: 5px 10px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+    }
+
+    .featured-title {
+      font-family: "Inter", sans-serif;
+      font-size: clamp(24px, 2.4vw, 34px);
+      font-weight: 600;
+      letter-spacing: -0.015em;
+      line-height: 1.25;
+      color: #111111;
+      margin-bottom: 20px;
+      transition: opacity 0.15s ease;
+    }
+
+    .featured-post:hover .featured-title {
+      opacity: 0.6;
+    }
+
+    .featured-excerpt {
+      font-family: "Inter", sans-serif;
+      font-size: 14px;
+      font-weight: 300;
+      line-height: 1.65;
+      color: #9a9a9a;
+      margin-bottom: 28px;
+      overflow: hidden;
+      max-height: calc(1.65em * 4);
+      max-width: 495px;
+    }
+
+    .featured-read-more {
+      font-family: "Inter", sans-serif;
+      font-size: 14px;
+      font-weight: 500;
+      color: #111111;
+      letter-spacing: 0.01em;
+    }
+
+    /* Responsive */
+    @media (max-width: 900px) {
+      .blog-inner { padding: 56px 40px 100px; }
+      .posts-grid { grid-template-columns: repeat(2, 1fr); gap: 32px 24px; }
+      .featured-post { grid-template-columns: 1fr; gap: 28px; margin-bottom: 56px; }
+      .featured-title { font-size: clamp(22px, 4vw, 30px); }
+    }
+
+    @media (max-width: 600px) {
+      .blog-inner { padding: 48px 24px 80px; }
+      .posts-grid { grid-template-columns: 1fr; gap: 40px; }
+      .featured-post { margin-bottom: 48px; }
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <a href="index.html" class="logo">HUGRAPH</a>
+    <div class="header-right">
+      <nav class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="blog.html">Blog</a>
+      </nav>
+      <a href="#" class="contact-btn">
+        Contact
+        <span class="contact-btn__badge">C</span>
+      </a>
+    </div>
+  </header>
+
+  <main class="blog-page">
+    <div class="blog-inner">
+
+      <div id="featuredContainer"></div>
+
+      <div class="blog-controls">
+        <div class="filter-tabs" id="filterTabs">
+          <button class="filter-btn active" data-filter="all">All</button>
+        </div>
+        <div class="search-wrap">
+          <span class="search-icon">
+            <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
+              <circle cx="5.5" cy="5.5" r="4.5" stroke="#aaa" stroke-width="1.2"/>
+              <line x1="9" y1="9" x2="12" y2="12" stroke="#aaa" stroke-width="1.2" stroke-linecap="round"/>
+            </svg>
+          </span>
+          <input class="blog-search" id="blogSearch" type="text" placeholder="Search..." />
+        </div>
+      </div>
+
+      <div id="postsContainer"></div>
+    </div>
+  </main>
+
+  <footer class="site-footer" id="siteFooter">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <div class="footer-logo">HUGRAPH</div>
+        <p class="footer-copyright">&copy; 2026 HUGRAPH. All rights reserved.</p>
+      </div>
+      <div class="footer-links">
+        <div class="footer-col">
+          <p class="footer-col-title">Company</p>
+          <a href="index.html">Home</a>
+          <a href="blog.html">Blog</a>
+          <a href="#">Contact</a>
+        </div>
+        <div class="footer-col">
+          <p class="footer-col-title">Legal</p>
+          <a href="#">Terms of Use</a>
+          <a href="#">Privacy Policy</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-glow-sentinel" id="footerGlowSentinel"></div>
+    <div class="footer-glow" id="footerGlow" aria-hidden="true">
+      <svg viewBox="0 0 1271 599" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="dia-grad" x1="0" y1="1" x2="0" y2="0">
+            <stop offset="0" stop-color="#FF79A6" />
+            <stop offset="0.1827" stop-color="#9D0051" />
+            <stop offset="0.2837" stop-color="#E90075" />
+            <stop offset="0.4135" stop-color="#FF2F91" />
+            <stop offset="0.5866" stop-color="#FFC2DC" />
+            <stop offset="0.6827" stop-color="#FF8971" />
+            <stop offset="0.8029" stop-color="#FFD2A6" />
+            <stop offset="1" stop-color="#FFF0D900" />
+          </linearGradient>
+          <filter id="dia-blur" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur stdDeviation="15" />
+          </filter>
+        </defs>
+        <g filter="url(#dia-blur)">
+          <rect x="0" y="276.69" width="173.7" height="322.31" fill="url(#dia-grad)" />
+          <rect x="141.22" y="197.6" width="173.7" height="401.4" fill="url(#dia-grad)" />
+          <rect x="282.44" y="124.6" width="173.7" height="474.4" fill="url(#dia-grad)" />
+          <rect x="423.67" y="60.2" width="173.7" height="538.8" fill="url(#dia-grad)" />
+          <rect x="564.89" y="12.98" width="173.7" height="586.02" fill="url(#dia-grad)" />
+          <rect x="706.11" y="60.2" width="173.7" height="538.8" fill="url(#dia-grad)" />
+          <rect x="847.33" y="124.6" width="173.7" height="474.4" fill="url(#dia-grad)" />
+          <rect x="988.56" y="197.6" width="173.7" height="401.4" fill="url(#dia-grad)" />
+          <rect x="1129.78" y="276.69" width="173.7" height="322.31" fill="url(#dia-grad)" />
+        </g>
+      </svg>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+  <script>
+    const { createClient } = supabase;
+    // TODO: replace with your own Supabase project's URL and anon/publishable key
+    const db = createClient(
+      'https://khsnsmciuqwpnwnzuenl.supabase.co',
+      'sb_publishable_kq2wTAegxdNVrV_MTAeCmw_zCvI3yEL'
+    );
+
+    function formatDate(str) {
+      const d = new Date(str);
+      const mm = String(d.getMonth() + 1).padStart(2, '0');
+      const dd = String(d.getDate()).padStart(2, '0');
+      const yyyy = d.getFullYear();
+      return `[${mm}.${dd}.${yyyy}]`;
+    }
+
+    let allPosts = [];
+    let activeFilter = 'all';
+
+    function stripMd(md) {
+      return (md || '')
+        .replace(/!\[.*?\]\(.*?\)/g, '')
+        .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')
+        .replace(/#{1,6}\s+/g, '')
+        .replace(/(\*\*|__)(.*?)\1/gs, '$2')
+        .replace(/(\*|_)(.*?)\1/gs, '$2')
+        .replace(/`{1,3}[^`]*`{1,3}/g, '')
+        .replace(/>\s+/g, '')
+        .replace(/[-*+]\s+/g, '')
+        .replace(/<[^>]+>/g, '')
+        .replace(/\n+/g, ' ')
+        .trim();
+    }
+
+    async function renderFeatured() {
+      const container = document.getElementById('featuredContainer');
+      const featured = allPosts.find(p => p.featured);
+      if (!featured) { container.innerHTML = ''; return; }
+
+      const rawExcerpt = featured.excerpt || '';
+      const excSentences = rawExcerpt.match(/[^.!?]+[.!?]+/g) || [];
+      let excerptText = excSentences.length >= 2 ? excSentences.slice(0, 2).join(' ').trim() : rawExcerpt;
+
+      if (!excerptText) {
+        const { data } = await db
+          .from('blog_posts')
+          .select('content')
+          .eq('id', featured.id)
+          .single();
+        const stripped = stripMd(data?.content || '');
+        const sentences = stripped.match(/[^.!?]+[.!?]+/g) || [];
+        excerptText = sentences.slice(0, 2).join(' ').trim() || stripped.slice(0, 200);
+      }
+
+      const fUrl = `blog-post.html?slug=${encodeURIComponent(featured.slug)}`;
+      const fImg = featured.cover_image_url
+        ? `<img class="featured-img" src="${featured.cover_image_url}" alt="${featured.title}" loading="lazy" />`
+        : `<div class="featured-img-placeholder"></div>`;
+      const fExcerpt = excerptText ? `<p class="featured-excerpt">${excerptText}</p>` : '';
+
+      container.innerHTML = `
+        <a class="featured-post" href="${fUrl}">
+          <div class="featured-img-wrap">${fImg}</div>
+          <div class="featured-text">
+            <span class="featured-category">Featured</span>
+            <div class="featured-title">${featured.title}</div>
+            ${fExcerpt}
+            <span class="featured-read-more">Read full story &rarr;</span>
+          </div>
+        </a>`;
+    }
+
+    function renderPosts() {
+      const container = document.getElementById('postsContainer');
+      const query = document.getElementById('blogSearch').value.trim().toLowerCase();
+      const featuredSlug = (allPosts.find(p => p.featured) || {}).slug;
+
+      const filtered = allPosts.filter(post => {
+        if (post.slug === featuredSlug) return false;
+        const matchFilter = activeFilter === 'all' || (post.category || '').toLowerCase() === activeFilter;
+        const matchSearch = !query ||
+          post.title.toLowerCase().includes(query) ||
+          (post.excerpt || '').toLowerCase().includes(query);
+        return matchFilter && matchSearch;
+      });
+
+      if (filtered.length === 0) {
+        container.innerHTML = '<div class="posts-empty">No Posts Found</div>';
+        return;
+      }
+
+      container.innerHTML = `<div class="posts-grid">${filtered.map(post => cardHtml(post)).join('')}</div>`;
+    }
+
+    function cardHtml(post) {
+      const url = `blog-post.html?slug=${encodeURIComponent(post.slug)}`;
+      const date = formatDate(post.published_at || post.created_at);
+      const img = post.cover_image_url
+        ? `<img class="card-img" src="${post.cover_image_url}" alt="${post.title}" loading="lazy" />`
+        : `<div class="card-img-placeholder"></div>`;
+      return `
+        <a class="post-card" href="${url}">
+          <div class="card-img-wrap">${img}</div>
+          <div class="card-date">${date}</div>
+          <div class="card-title">${post.title}</div>
+        </a>`;
+    }
+
+    async function loadPosts() {
+      const container = document.getElementById('postsContainer');
+
+      const { data: posts, error } = await db
+        .from('blog_posts')
+        .select('id, title, slug, excerpt, cover_image_url, category, published_at, created_at, featured')
+        .eq('published', true)
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        container.innerHTML = '<div class="posts-empty">No Posts Found</div>';
+        return;
+      }
+
+      if (!posts || posts.length === 0) {
+        container.innerHTML = '<div class="posts-empty">No Posts Found</div>';
+        return;
+      }
+
+      allPosts = posts;
+
+      await renderFeatured();
+
+      const categories = [...new Set(posts.map(p => p.category).filter(Boolean))];
+      const tabsEl = document.getElementById('filterTabs');
+      categories.forEach(cat => {
+        const btn = document.createElement('button');
+        btn.className = 'filter-btn';
+        btn.dataset.filter = cat.toLowerCase();
+        btn.textContent = cat;
+        btn.addEventListener('click', () => setFilter(cat.toLowerCase()));
+        tabsEl.appendChild(btn);
+      });
+
+      renderPosts();
+
+      requestAnimationFrame(() => {
+        const activeBtn = document.querySelector('.filter-btn.active');
+        if (activeBtn) moveSlider(activeBtn);
+      });
+    }
+
+    function moveSlider(activeBtn) {
+      const tabs = document.getElementById('filterTabs');
+      let slider = tabs.querySelector('.filter-slider');
+      if (!slider) {
+        slider = document.createElement('div');
+        slider.className = 'filter-slider';
+        tabs.insertBefore(slider, tabs.firstChild);
+      }
+      const tabsRect = tabs.getBoundingClientRect();
+      const btnRect = activeBtn.getBoundingClientRect();
+      slider.style.left = (btnRect.left - tabsRect.left) + 'px';
+      slider.style.width = btnRect.width + 'px';
+    }
+
+    function setFilter(filter) {
+      activeFilter = filter;
+      document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.filter === filter);
+        if (btn.dataset.filter === filter) moveSlider(btn);
+      });
+      renderPosts();
+    }
+
+    document.getElementById('filterTabs').addEventListener('click', e => {
+      if (e.target.classList.contains('filter-btn')) {
+        setFilter(e.target.dataset.filter);
+      }
+    });
+
+    document.getElementById('blogSearch').addEventListener('input', renderPosts);
+
+    loadPosts();
+  </script>
+  <script src="script.js"></script>
+</body>
+</html>

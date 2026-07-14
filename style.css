@@ -8,6 +8,12 @@ html {
   overflow-x: hidden;
 }
 
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
 body {
   font-family: "Inter", sans-serif;
   background: #ffffff;
@@ -33,6 +39,8 @@ body {
   font-weight: 600;
   letter-spacing: -0.01em;
   text-transform: uppercase;
+  color: #111111;
+  text-decoration: none;
 }
 
 .header-right {
@@ -384,6 +392,13 @@ body {
 
 .blog-scroll::-webkit-scrollbar {
   display: none;
+}
+
+.blog-scroll-empty {
+  font-size: 13px;
+  font-weight: 300;
+  color: #9a9a9a;
+  padding: 24px 0;
 }
 
 .blog-card {

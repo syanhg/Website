@@ -1,0 +1,431 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Blog — HUGRAPH</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    .post-page {
+      padding-top: 96px;
+      position: relative;
+    }
+
+    .word {
+      display: inline-block;
+      opacity: 0;
+      transform: translateY(8px);
+      transition: opacity 0.5s ease, transform 0.5s ease;
+    }
+
+    .word.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Back link */
+    .post-back-row {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 24px 40px 0;
+    }
+
+    .post-back {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: "Inter", sans-serif;
+      font-size: 13px;
+      font-weight: 500;
+      color: #9a9a9a;
+      text-decoration: none;
+      transition: color 0.15s ease;
+    }
+
+    .post-back:hover {
+      color: #111111;
+    }
+
+    /* Centered hero header */
+    .post-hero {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 40px 40px 0;
+      text-align: center;
+    }
+
+    .post-badge {
+      display: inline-block;
+      font-family: "Inter", sans-serif;
+      font-size: 11px;
+      font-weight: 500;
+      color: #9a9a9a;
+      background: #f0f0f0;
+      border-radius: 2.5px;
+      padding: 5px 10px;
+      margin-bottom: 28px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .post-hero h1 {
+      font-family: "Inter", sans-serif;
+      font-size: clamp(32px, 4.6vw, 52px);
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      line-height: 1.15;
+      color: #111111;
+      margin-bottom: 24px;
+      max-width: 760px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .post-published {
+      font-family: "Inter", sans-serif;
+      font-size: 13px;
+      font-weight: 500;
+      color: #9a9a9a;
+      margin-bottom: 0;
+    }
+
+    /* Cover image block */
+    .post-cover-wrap {
+      max-width: 860px;
+      margin: 48px auto 0;
+      padding: 0 40px;
+    }
+
+    .post-cover {
+      max-width: 100%;
+      height: auto;
+      border-radius: 12px;
+      display: block;
+      margin: 0 auto;
+    }
+
+    /* Content */
+    .post-wrap {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 56px 40px 100px;
+    }
+
+    .post-content {
+      font-family: "Inter", sans-serif;
+      font-weight: 300;
+      font-size: 17px;
+      line-height: 1.8;
+      color: #333333;
+    }
+
+    .post-content p {
+      margin-bottom: 24px;
+    }
+
+    .post-content h2 {
+      font-family: "Inter", sans-serif;
+      font-weight: 600;
+      font-size: 26px;
+      letter-spacing: -0.01em;
+      margin-top: 56px;
+      margin-bottom: 20px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid #ececec;
+      color: #111111;
+    }
+
+    .post-content h3 {
+      font-family: "Inter", sans-serif;
+      font-weight: 600;
+      font-size: 20px;
+      margin-top: 36px;
+      margin-bottom: 12px;
+      color: #111111;
+    }
+
+    .post-content h4 {
+      font-family: "Inter", sans-serif;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-top: 28px;
+      margin-bottom: 8px;
+      color: #9a9a9a;
+    }
+
+    .post-content ul,
+    .post-content ol {
+      margin-bottom: 24px;
+      padding-left: 24px;
+    }
+
+    .post-content li {
+      margin-bottom: 8px;
+      line-height: 1.75;
+    }
+
+    .post-content a {
+      color: #111111;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+
+    .post-content a:hover {
+      color: #6a6a6a;
+    }
+
+    .post-content strong {
+      font-weight: 600;
+      color: #111111;
+    }
+
+    .post-content em {
+      font-style: italic;
+    }
+
+    .post-content blockquote {
+      border-left: 3px solid #ececec;
+      padding-left: 24px;
+      margin: 32px 0;
+      color: #6a6a6a;
+      font-style: italic;
+    }
+
+    .post-content code {
+      font-family: "Inter", sans-serif;
+      font-size: 13px;
+      background: #f0f0f0;
+      padding: 2px 6px;
+      border: 1px solid #ececec;
+      border-radius: 4px;
+    }
+
+    .post-content pre {
+      background: #f0f0f0;
+      border: 1px solid #ececec;
+      border-radius: 8px;
+      padding: 20px 24px;
+      overflow-x: auto;
+      margin-bottom: 24px;
+    }
+
+    .post-content pre code {
+      background: none;
+      border: none;
+      padding: 0;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .post-content hr {
+      border: none;
+      border-top: 1px solid #ececec;
+      margin: 48px 0;
+    }
+
+    .post-content .chip {
+      display: inline-block;
+      background: #f0f0f0;
+      color: #6a6a6a;
+      font-family: "Inter", sans-serif;
+      font-size: 0.78em;
+      font-weight: 500;
+      padding: 1px 7px;
+      border-radius: 3px;
+      letter-spacing: 0.01em;
+      vertical-align: middle;
+    }
+
+    .post-content img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 8px;
+      margin: 8px 0 24px;
+    }
+
+    .post-not-found,
+    .post-loading {
+      padding: 80px 0;
+      text-align: center;
+      font-family: "Inter", sans-serif;
+      font-size: 13px;
+      font-weight: 500;
+      color: #9a9a9a;
+      letter-spacing: 0.02em;
+    }
+
+    @media (max-width: 768px) {
+      .post-back-row { padding: 16px 24px 0; }
+      .post-hero { padding: 28px 24px 0; }
+      .post-cover-wrap { padding: 0 24px; }
+      .post-wrap { padding: 40px 24px 80px; }
+
+      .post-hero h1 { font-size: 28px; }
+      .post-content { font-size: 16px; }
+      .post-content h2 { font-size: 22px; }
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <a href="index.html" class="logo">HUGRAPH</a>
+    <div class="header-right">
+      <nav class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="blog.html">Blog</a>
+      </nav>
+      <a href="#" class="contact-btn">
+        Contact
+        <span class="contact-btn__badge">C</span>
+      </a>
+    </div>
+  </header>
+
+  <main class="post-page" id="postMain">
+    <div class="post-loading">Loading...</div>
+  </main>
+
+  <footer class="site-footer" id="siteFooter">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <div class="footer-logo">HUGRAPH</div>
+        <p class="footer-copyright">&copy; 2026 HUGRAPH. All rights reserved.</p>
+      </div>
+      <div class="footer-links">
+        <div class="footer-col">
+          <p class="footer-col-title">Company</p>
+          <a href="index.html">Home</a>
+          <a href="blog.html">Blog</a>
+          <a href="#">Contact</a>
+        </div>
+        <div class="footer-col">
+          <p class="footer-col-title">Legal</p>
+          <a href="#">Terms of Use</a>
+          <a href="#">Privacy Policy</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-glow-sentinel" id="footerGlowSentinel"></div>
+    <div class="footer-glow" id="footerGlow" aria-hidden="true">
+      <svg viewBox="0 0 1271 599" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="dia-grad" x1="0" y1="1" x2="0" y2="0">
+            <stop offset="0" stop-color="#FF79A6" />
+            <stop offset="0.1827" stop-color="#9D0051" />
+            <stop offset="0.2837" stop-color="#E90075" />
+            <stop offset="0.4135" stop-color="#FF2F91" />
+            <stop offset="0.5866" stop-color="#FFC2DC" />
+            <stop offset="0.6827" stop-color="#FF8971" />
+            <stop offset="0.8029" stop-color="#FFD2A6" />
+            <stop offset="1" stop-color="#FFF0D900" />
+          </linearGradient>
+          <filter id="dia-blur" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur stdDeviation="15" />
+          </filter>
+        </defs>
+        <g filter="url(#dia-blur)">
+          <rect x="0" y="276.69" width="173.7" height="322.31" fill="url(#dia-grad)" />
+          <rect x="141.22" y="197.6" width="173.7" height="401.4" fill="url(#dia-grad)" />
+          <rect x="282.44" y="124.6" width="173.7" height="474.4" fill="url(#dia-grad)" />
+          <rect x="423.67" y="60.2" width="173.7" height="538.8" fill="url(#dia-grad)" />
+          <rect x="564.89" y="12.98" width="173.7" height="586.02" fill="url(#dia-grad)" />
+          <rect x="706.11" y="60.2" width="173.7" height="538.8" fill="url(#dia-grad)" />
+          <rect x="847.33" y="124.6" width="173.7" height="474.4" fill="url(#dia-grad)" />
+          <rect x="988.56" y="197.6" width="173.7" height="401.4" fill="url(#dia-grad)" />
+          <rect x="1129.78" y="276.69" width="173.7" height="322.31" fill="url(#dia-grad)" />
+        </g>
+      </svg>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/marked@9/marked.min.js"></script>
+  <script>
+    const { createClient } = supabase;
+    // TODO: replace with your own Supabase project's URL and anon/publishable key
+    const db = createClient(
+      'https://khsnsmciuqwpnwnzuenl.supabase.co',
+      'sb_publishable_kq2wTAegxdNVrV_MTAeCmw_zCvI3yEL'
+    );
+
+    function formatDate(dateStr) {
+      const d = new Date(dateStr);
+      const mm = String(d.getMonth() + 1).padStart(2, '0');
+      const dd = String(d.getDate()).padStart(2, '0');
+      const yyyy = d.getFullYear();
+      return `${mm}/${dd}/${yyyy}`;
+    }
+
+    async function loadPost() {
+      const params = new URLSearchParams(window.location.search);
+      const slug = params.get('slug');
+      const main = document.getElementById('postMain');
+
+      if (!slug) {
+        main.innerHTML = '<div class="post-not-found">Post not found. <a href="blog.html">Back to Blog &rarr;</a></div>';
+        return;
+      }
+
+      const { data: post, error } = await db
+        .from('blog_posts')
+        .select('*')
+        .eq('slug', slug)
+        .eq('published', true)
+        .single();
+
+      if (error || !post) {
+        main.innerHTML = '<div class="post-not-found">Post not found. <a href="blog.html">Back to Blog &rarr;</a></div>';
+        return;
+      }
+
+      document.title = `${post.title} — HUGRAPH`;
+
+      const dateStr = formatDate(post.published_at || post.created_at);
+      const cover = post.cover_image_url
+        ? `<div class="post-cover-wrap"><img class="post-cover" src="${post.cover_image_url}" alt="${post.title}" /></div>`
+        : '';
+      const renderedContent = marked.parse(post.content || '');
+
+      main.innerHTML = `
+        <div class="post-back-row">
+          <a class="post-back" href="blog.html">&larr; Back</a>
+        </div>
+
+        <div class="post-hero">
+          <span class="post-badge">Blog post</span>
+          <h1 id="postH1">${post.title}</h1>
+          <p class="post-published">Published on ${dateStr}</p>
+        </div>
+
+        ${cover}
+
+        <div class="post-wrap">
+          <div class="post-content">${renderedContent}</div>
+        </div>
+      `;
+
+      const h1 = document.getElementById('postH1');
+      const words = h1.textContent.trim().split(' ');
+      h1.innerHTML = '';
+      words.forEach((word, i) => {
+        const span = document.createElement('span');
+        span.className = 'word';
+        span.textContent = word;
+        h1.appendChild(span);
+        if (i < words.length - 1) h1.appendChild(document.createTextNode(' '));
+      });
+      h1.querySelectorAll('.word').forEach((w, i) => {
+        setTimeout(() => w.classList.add('visible'), i * 80);
+      });
+    }
+
+    loadPost();
+  </script>
+  <script src="script.js"></script>
+</body>
+</html>
