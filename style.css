@@ -823,6 +823,10 @@ body {
     margin-left: 48px;
     -webkit-line-clamp: 3;
   }
+
+  .lead-demo-prompt {
+    width: 85%;
+  }
 }
 
 .case-dash {
