@@ -195,6 +195,100 @@
 })();
 
 (function () {
+  const root = document.getElementById("leadDemo");
+  if (!root) return;
+
+  const rows = Array.from(root.querySelectorAll(".lead-demo-row[data-status]"));
+  const totalEl = document.getElementById("leadStatTotal");
+  const doneEl = document.getElementById("leadStatDone");
+  const progressEl = document.getElementById("leadStatProgress");
+
+  const ROW_STAGGER = 650;
+  const HOLD_DURATION = 3200;
+  const RESET_GAP = 900;
+  const LOOP_GAP = 1400;
+  const BUMP_DURATION = 220;
+
+  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  let playing = false;
+  let timers = [];
+  let autoplayTimer = null;
+
+  function bump(el, value) {
+    el.textContent = String(value);
+    el.classList.remove("is-bump");
+    // force reflow so the class can be re-added to replay the animation
+    void el.offsetWidth;
+    el.classList.add("is-bump");
+    setTimeout(() => el.classList.remove("is-bump"), BUMP_DURATION);
+  }
+
+  function reset() {
+    rows.forEach((row) => row.classList.remove("is-visible"));
+    totalEl.textContent = "0";
+    doneEl.textContent = "0";
+    progressEl.textContent = "0";
+  }
+
+  function scheduleAutoplay() {
+    if (reduceMotion) return;
+    clearTimeout(autoplayTimer);
+    autoplayTimer = setTimeout(playSequence, LOOP_GAP);
+  }
+
+  function playSequence() {
+    if (playing) return;
+    playing = true;
+    clearTimeout(autoplayTimer);
+    reset();
+
+    let total = 0;
+    let done = 0;
+    let progress = 0;
+
+    rows.forEach((row, i) => {
+      const t = setTimeout(() => {
+        row.classList.add("is-visible");
+        total += 1;
+        bump(totalEl, total);
+        if (row.dataset.status === "done") {
+          done += 1;
+          bump(doneEl, done);
+        } else {
+          progress += 1;
+          bump(progressEl, progress);
+        }
+      }, i * ROW_STAGGER);
+      timers.push(t);
+    });
+
+    const finalTimer = setTimeout(() => {
+      playing = false;
+      scheduleAutoplay();
+    }, rows.length * ROW_STAGGER + HOLD_DURATION + RESET_GAP);
+    timers.push(finalTimer);
+  }
+
+  root.addEventListener("click", playSequence);
+
+  if (!reduceMotion) {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            playSequence();
+            observer.disconnect();
+          }
+        });
+      },
+      { threshold: 0.4 }
+    );
+    observer.observe(root);
+  }
+})();
+
+(function () {
   const shortcutEls = Array.from(document.querySelectorAll("[data-shortcut]"));
   if (!shortcutEls.length) return;
 

@@ -62,7 +62,74 @@
 
   <section class="products">
     <div class="product-row">
-      <div class="product-visual"></div>
+      <div class="product-visual">
+        <div class="lead-demo" id="leadDemo">
+          <div class="lead-demo-header">
+            <div class="lead-demo-title-row">
+              <h4 class="lead-demo-title">가망고객 DB 자동 생성</h4>
+              <span class="lead-demo-badge"><span class="lead-demo-badge-icon">&#10022;</span>AI 상담 데모</span>
+            </div>
+            <p class="lead-demo-subtitle">상담 내용을 분석해 가망고객 DB를 자동으로 구축하고 설계까지 완료합니다.</p>
+          </div>
+
+          <div class="lead-demo-stats">
+            <div class="lead-demo-stat">
+              <span class="lead-demo-stat-num" id="leadStatTotal">0</span>
+              <span class="lead-demo-stat-label">신규 리드</span>
+            </div>
+            <div class="lead-demo-stat lead-demo-stat--split">
+              <span class="lead-demo-stat-num" id="leadStatDone">0</span>
+              <span class="lead-demo-stat-label">설계완료</span>
+              <span class="lead-demo-stat-num" id="leadStatProgress">0</span>
+              <span class="lead-demo-stat-label">상담중</span>
+            </div>
+          </div>
+
+          <div class="lead-demo-table">
+            <div class="lead-demo-row lead-demo-row--head">
+              <span class="lead-demo-check" aria-hidden="true"></span>
+              <span class="lead-demo-col-label">고객 상담 기록</span>
+              <span class="lead-demo-col-input">상담 내용</span>
+            </div>
+
+            <div class="lead-demo-row" data-status="done">
+              <span class="lead-demo-check" aria-hidden="true"></span>
+              <div class="lead-demo-main">
+                <span class="lead-demo-pill lead-demo-pill--done">설계완료</span>
+                <p class="lead-demo-desc">35세 고객, 종신보험 3천만원 설계 후 DB 등록</p>
+              </div>
+              <p class="lead-demo-input">월 보험료가 얼마나 될지 궁금해서 연락드렸습니다. 종신보험으로 준비하고 싶어요.</p>
+            </div>
+
+            <div class="lead-demo-row" data-status="progress">
+              <span class="lead-demo-check" aria-hidden="true"></span>
+              <div class="lead-demo-main">
+                <span class="lead-demo-pill">신규 상담</span>
+                <p class="lead-demo-desc">28세 고객, 실손의료비 특약 상담 진행 중</p>
+              </div>
+              <p class="lead-demo-input">직장을 옮기면서 보장 공백이 생겨서 실손보험을 알아보고 있어요.</p>
+            </div>
+
+            <div class="lead-demo-row" data-status="done">
+              <span class="lead-demo-check" aria-hidden="true"></span>
+              <div class="lead-demo-main">
+                <span class="lead-demo-pill lead-demo-pill--done">설계완료</span>
+                <p class="lead-demo-desc">42세 고객, 건강보험 + 암특약 설계 완료</p>
+              </div>
+              <p class="lead-demo-input">가족력이 있어서 암보험을 우선적으로 준비하고 싶습니다.</p>
+            </div>
+
+            <div class="lead-demo-row" data-status="progress">
+              <span class="lead-demo-check" aria-hidden="true"></span>
+              <div class="lead-demo-main">
+                <span class="lead-demo-pill">신규 상담</span>
+                <p class="lead-demo-desc">31세 고객, 자녀 보험 문의 접수</p>
+              </div>
+              <p class="lead-demo-input">곧 태어날 아기를 위한 어린이 보험을 추천받고 싶어요.</p>
+            </div>
+          </div>
+        </div>
+      </div>
       <div class="product-text">
         <img class="product-icon" src="assets/avatars/product-icon-1.svg" alt="" width="32" height="32" />
         <span class="product-chip">Product 1</span>
