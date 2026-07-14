@@ -22,9 +22,25 @@
   const VANISH_EASE = "cubic-bezier(0.6, 0, 0.9, 0.4)";
   const REAPPEAR_EASE = "cubic-bezier(0.16, 1, 0.3, 1)";
 
+  // Avatar diameter relative to stage size, taken from the base layout
+  // (96px avatar on a 420px stage). Scaling both radius and avatar by the
+  // same factor keeps the ring uniform, so spacing never changes and the
+  // circles can't start overlapping when the stage shrinks.
+  const AVATAR_RATIO = 96 / 420;
+
   function computeRadius() {
     const size = stage.clientWidth;
-    radius = size / 2 - 48;
+    const avatarSize = size * AVATAR_RATIO;
+    const half = avatarSize / 2;
+    radius = size / 2 - half;
+
+    for (let i = 0; i < count; i++) {
+      const slot = slots[i];
+      slot.style.width = avatarSize + "px";
+      slot.style.height = avatarSize + "px";
+      slot.style.marginTop = -half + "px";
+      slot.style.marginLeft = -half + "px";
+    }
   }
 
   let lastMotionBlur = -1;
