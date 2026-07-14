@@ -1236,6 +1236,16 @@ body {
     z-index: 30;
   }
 
+  .logo {
+    position: relative;
+    z-index: 30;
+    transition: color 0.3s ease;
+  }
+
+  .site-header.is-open .logo {
+    color: #ffffff;
+  }
+
   .site-header.is-open .nav-toggle-bar {
     background: #ffffff;
   }
