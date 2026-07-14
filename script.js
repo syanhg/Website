@@ -194,19 +194,19 @@
   observer.observe(sentinel);
 })();
 
-(function () {
-  const root = document.getElementById("leadDemo");
+function initLeadDemo(rootId, chatScreenId, leadsScreenId, ctaId) {
+  const root = document.getElementById(rootId);
   if (!root) return;
 
-  const chatScreen = document.getElementById("leadScreenChat");
-  const leadsScreen = document.getElementById("leadScreenLeads");
+  const chatScreen = document.getElementById(chatScreenId);
+  const leadsScreen = document.getElementById(leadsScreenId);
   const chatScroll = root.querySelector(".lead-demo-chat");
   const userMsg = root.querySelector(".lead-demo-user-msg");
   const stepsLine = root.querySelector(".lead-demo-steps-line");
   const steps = Array.from(root.querySelectorAll(".lead-demo-steps-content > .lead-demo-step, .lead-demo-steps-content > .lead-demo-sources"));
   const aiLines = Array.from(root.querySelectorAll(".lead-demo-ai-line"));
   const tableMini = root.querySelector(".lead-demo-table-mini");
-  const cta = document.getElementById("leadDemoCta");
+  const cta = document.getElementById(ctaId);
   const rows = Array.from(root.querySelectorAll(".lead-demo-row[data-status]"));
 
   // Wrap text in per-word spans (keeping inline tags like <strong> intact)
@@ -386,7 +386,10 @@
     );
     observer.observe(root);
   }
-})();
+}
+
+initLeadDemo("leadDemo", "leadScreenChat", "leadScreenLeads", "leadDemoCta");
+initLeadDemo("caseDemo", "caseScreenChat", "caseScreenLeads", "caseDemoCta");
 
 (function () {
   const shortcutEls = Array.from(document.querySelectorAll("[data-shortcut]"));
