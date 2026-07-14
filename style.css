@@ -790,11 +790,12 @@ body {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: 8px;
-  padding: 14px 18px;
+  gap: 5px;
+  padding: 11px 16px;
   border-top: 1px solid #f0f0f0;
-  background: #fafafa;
-  transition: background 0.35s ease;
+  background: #ffffff;
+  overflow: hidden;
+  transition: flex 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .case-approval:first-child {
@@ -802,8 +803,12 @@ body {
 }
 
 .case-approval[data-state="active"] {
-  background: #ffffff;
-  flex: 1.6;
+  flex: 1.7;
+}
+
+.case-dash:has(.case-approval[data-state="active"]) .case-approval:not([data-state="active"]) .case-approval-body {
+  -webkit-line-clamp: 1;
+  line-clamp: 1;
 }
 
 .case-approval-head {
@@ -814,15 +819,17 @@ body {
 }
 
 .case-approval-badge {
+  box-sizing: border-box;
   display: inline-flex;
   align-items: center;
+  height: 22px;
   font-size: 10px;
   font-weight: 500;
   letter-spacing: 0.02em;
   color: #9a9a9a;
   border: 1px solid #d8d8d8;
-  padding: 3px 9px;
-  border-radius: 20px;
+  padding: 0 9px;
+  border-radius: 4px;
   transition: color 0.3s ease, border-color 0.3s ease;
 }
 
@@ -832,11 +839,13 @@ body {
 }
 
 .case-approval-actions {
+  box-sizing: border-box;
   display: none;
   align-items: stretch;
+  height: 22px;
   flex-shrink: 0;
   border: 1px solid #d8d8d8;
-  border-radius: 8px;
+  border-radius: 4px;
   overflow: hidden;
 }
 
@@ -848,7 +857,7 @@ body {
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  padding: 5px 9px;
+  padding: 0 8px;
   font-family: inherit;
   font-size: 10px;
   font-weight: 500;
@@ -885,14 +894,27 @@ body {
   overflow: hidden;
 }
 
-.case-approval[data-state="active"] .case-approval-body {
-  -webkit-line-clamp: 3;
-  line-clamp: 3;
+.case-approval-detail {
+  font-size: 10px;
+  font-weight: 400;
+  line-height: 1.6;
+  color: #9a9a9a;
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  transition: max-height 0.5s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease, margin-top 0.5s ease;
+}
+
+.case-approval[data-state="active"] .case-approval-detail {
+  max-height: 120px;
+  opacity: 1;
+  margin-top: 2px;
 }
 
 @media (prefers-reduced-motion: reduce) {
   .case-approval,
-  .case-approval-badge {
+  .case-approval-badge,
+  .case-approval-detail {
     transition: none;
   }
 }
