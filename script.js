@@ -194,6 +194,30 @@
   observer.observe(sentinel);
 })();
 
+// Wrap text in per-word spans (keeping inline tags like <strong> intact) so
+// content can stream in word by word instead of appearing all at once.
+function wrapWords(node) {
+  Array.from(node.childNodes).forEach((child) => {
+    if (child.nodeType === Node.TEXT_NODE) {
+      const frag = document.createDocumentFragment();
+      child.textContent.split(/(\s+)/).forEach((part) => {
+        if (part === "") return;
+        if (/^\s+$/.test(part)) {
+          frag.appendChild(document.createTextNode(part));
+        } else {
+          const span = document.createElement("span");
+          span.className = "lead-demo-word";
+          span.textContent = part;
+          frag.appendChild(span);
+        }
+      });
+      node.replaceChild(frag, child);
+    } else if (child.nodeType === Node.ELEMENT_NODE) {
+      wrapWords(child);
+    }
+  });
+}
+
 function initLeadDemo(rootId, chatScreenId, leadsScreenId, ctaId) {
   const root = document.getElementById(rootId);
   if (!root) return;
@@ -209,29 +233,6 @@ function initLeadDemo(rootId, chatScreenId, leadsScreenId, ctaId) {
   const cta = document.getElementById(ctaId);
   const rows = Array.from(root.querySelectorAll(".lead-demo-row[data-status]"));
 
-  // Wrap text in per-word spans (keeping inline tags like <strong> intact)
-  // so content can stream in word by word instead of appearing all at once.
-  function wrapWords(node) {
-    Array.from(node.childNodes).forEach((child) => {
-      if (child.nodeType === Node.TEXT_NODE) {
-        const frag = document.createDocumentFragment();
-        child.textContent.split(/(\s+)/).forEach((part) => {
-          if (part === "") return;
-          if (/^\s+$/.test(part)) {
-            frag.appendChild(document.createTextNode(part));
-          } else {
-            const span = document.createElement("span");
-            span.className = "lead-demo-word";
-            span.textContent = part;
-            frag.appendChild(span);
-          }
-        });
-        node.replaceChild(frag, child);
-      } else if (child.nodeType === Node.ELEMENT_NODE) {
-        wrapWords(child);
-      }
-    });
-  }
   aiLines.forEach(wrapWords);
   const paragraphWords = Array.from(root.querySelectorAll(".lead-demo-ai-line .lead-demo-word"));
 
@@ -395,9 +396,15 @@ initLeadDemo("leadDemo", "leadScreenChat", "leadScreenLeads", "leadDemoCta");
   if (!root) return;
 
   const cards = Array.from(root.querySelectorAll(".case-approval"));
+  cards.forEach((card) => {
+    wrapWords(card.querySelector(".case-approval-detail"));
+  });
+  const cardWords = cards.map((card) => Array.from(card.querySelectorAll(".case-approval-detail .lead-demo-word")));
 
   const CARD_ACTIVE_DELAY = 400;
-  const REVIEW_HOLD = 1300;
+  const WORD_START_GAP = 250;
+  const WORD_STAGGER = 45;
+  const AFTER_STREAM_HOLD = 700;
   const PRESS_DURATION = 160;
   const AFTER_APPROVE_GAP = 500;
   const HOLD_DURATION = 2000;
@@ -409,10 +416,11 @@ initLeadDemo("leadDemo", "leadScreenChat", "leadScreenLeads", "leadDemoCta");
   let autoplayTimer = null;
 
   function reset() {
-    cards.forEach((card) => {
+    cards.forEach((card, i) => {
       card.removeAttribute("data-state");
       card.dataset.status = "pending";
       card.querySelector(".case-approval-badge").textContent = "검토 필요";
+      cardWords[i].forEach((word) => word.classList.remove("is-visible"));
     });
   }
 
@@ -455,9 +463,18 @@ initLeadDemo("leadDemo", "leadScreenChat", "leadScreenLeads", "leadDemoCta");
       }
 
       const card = cards[i];
+      const words = cardWords[i];
+
       setTimeout(() => {
         card.dataset.state = "active";
-        setTimeout(() => approveCard(card, () => step(i + 1)), REVIEW_HOLD);
+
+        let t = WORD_START_GAP;
+        words.forEach((word) => {
+          setTimeout(() => word.classList.add("is-visible"), t);
+          t += WORD_STAGGER;
+        });
+
+        setTimeout(() => approveCard(card, () => step(i + 1)), t + AFTER_STREAM_HOLD);
       }, CARD_ACTIVE_DELAY);
     }
 

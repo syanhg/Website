@@ -902,7 +902,11 @@ body {
   max-height: 0;
   opacity: 0;
   overflow: hidden;
-  transition: max-height 0.5s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease, margin-top 0.5s ease;
+  transition: max-height 0.5s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.15s ease, margin-top 0.5s ease;
+}
+
+.case-approval-detail .lead-demo-word {
+  transition: opacity 0.25s ease;
 }
 
 .case-approval[data-state="active"] .case-approval-detail {
