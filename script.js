@@ -118,29 +118,39 @@
 })();
 
 function wrapLetters(el) {
-  const text = el.textContent;
+  // Walk the original child nodes so authored <br> breaks survive the
+  // letter-wrapping (plain textContent would drop them). Text runs get
+  // split into words/letters; <br> elements are re-inserted verbatim.
+  const sourceNodes = Array.from(el.childNodes);
+  el.setAttribute("aria-label", el.textContent);
   el.textContent = "";
-  el.setAttribute("aria-label", text);
 
   const letterEls = [];
-  const words = text.split(" ");
 
-  words.forEach((word, wordIndex) => {
-    const wordEl = document.createElement("span");
-    wordEl.className = "tw-word";
-
-    Array.from(word).forEach((char) => {
-      const letterEl = document.createElement("span");
-      letterEl.className = "tw-letter";
-      letterEl.textContent = char;
-      wordEl.appendChild(letterEl);
-      letterEls.push(letterEl);
-    });
-
-    el.appendChild(wordEl);
-    if (wordIndex < words.length - 1) {
-      el.appendChild(document.createTextNode(" "));
+  sourceNodes.forEach((node) => {
+    if (node.nodeType === Node.ELEMENT_NODE && node.tagName === "BR") {
+      el.appendChild(document.createElement("br"));
+      return;
     }
+
+    const words = node.textContent.split(" ");
+    words.forEach((word, wordIndex) => {
+      const wordEl = document.createElement("span");
+      wordEl.className = "tw-word";
+
+      Array.from(word).forEach((char) => {
+        const letterEl = document.createElement("span");
+        letterEl.className = "tw-letter";
+        letterEl.textContent = char;
+        wordEl.appendChild(letterEl);
+        letterEls.push(letterEl);
+      });
+
+      el.appendChild(wordEl);
+      if (wordIndex < words.length - 1) {
+        el.appendChild(document.createTextNode(" "));
+      }
+    });
   });
 
   return letterEls;
@@ -589,6 +599,7 @@ initLeadDemo("leadDemo", "leadScreenChat", "leadScreenLeads", "leadDemoCta");
   function setOpen(open) {
     header.classList.toggle("is-open", open);
     toggle.setAttribute("aria-expanded", open ? "true" : "false");
+    document.documentElement.classList.toggle("nav-open", open);
   }
 
   toggle.addEventListener("click", (e) => {

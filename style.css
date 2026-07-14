@@ -8,6 +8,10 @@ html {
   overflow-x: hidden;
 }
 
+html.nav-open {
+  overflow: hidden;
+}
+
 @media (prefers-reduced-motion: no-preference) {
   html {
     scroll-behavior: smooth;
@@ -1222,42 +1226,68 @@ body {
 
   .nav-toggle {
     display: flex;
+    position: relative;
+    z-index: 30;
+  }
+
+  .site-header.is-open .nav-toggle-bar {
+    background: #ffffff;
   }
 
   .header-right {
-    position: absolute;
-    top: 100%;
-    right: 16px;
+    position: fixed;
+    inset: 0;
+    z-index: 20;
     flex-direction: column;
-    align-items: flex-end;
-    gap: 18px;
-    padding: 20px 22px;
-    background: rgba(255, 255, 255, 0.92);
-    backdrop-filter: blur(18px) saturate(180%);
-    -webkit-backdrop-filter: blur(18px) saturate(180%);
-    border: 1px solid rgba(17, 17, 17, 0.08);
-    border-radius: 12px;
-    box-shadow: 0 12px 32px -12px rgba(0, 0, 0, 0.2);
+    justify-content: flex-end;
+    align-items: stretch;
+    gap: 0;
+    padding: 0 24px 44px;
+    background: #000000;
     opacity: 0;
-    transform: translateY(-8px);
     pointer-events: none;
-    transition: opacity 0.25s ease, transform 0.25s ease;
+    transition: opacity 0.3s ease;
   }
 
   .site-header.is-open .header-right {
     opacity: 1;
-    transform: translateY(0);
     pointer-events: auto;
   }
 
   .nav-links {
     flex-direction: column;
-    align-items: flex-end;
-    gap: 16px;
+    align-items: stretch;
+    gap: 0;
+    width: 100%;
   }
 
-  .nav-links a {
-    font-size: 15px;
+  .nav-links a,
+  .header-right .contact-btn {
+    display: block;
+    width: 100%;
+    padding: 22px 4px;
+    font-size: 40px;
+    font-weight: 400;
+    letter-spacing: -0.01em;
+    text-transform: none;
+    text-align: left;
+    color: #ffffff;
+    background: none;
+    border: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.22);
+  }
+
+  .header-right .contact-btn {
+    gap: 0;
+    border-radius: 0;
+  }
+
+  .header-right .contact-btn:hover {
+    background: none;
+  }
+
+  .header-right .contact-btn__badge {
+    display: none;
   }
 
   .partners-row {
