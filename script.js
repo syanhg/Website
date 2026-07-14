@@ -10,7 +10,7 @@
   const intersecting = new Set();
 
   function updateGlass() {
-    logo.classList.toggle("is-glass", intersecting.size > 0);
+    logo.classList.toggle("is-xray", intersecting.size > 0);
   }
 
   // Shrinks the observer's effective viewport down to just the header's own
