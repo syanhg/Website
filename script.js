@@ -198,13 +198,21 @@
   const root = document.getElementById("leadDemo");
   if (!root) return;
 
+  const chatScreen = document.getElementById("leadScreenChat");
+  const leadsScreen = document.getElementById("leadScreenLeads");
   const userMsg = root.querySelector(".lead-demo-user-msg");
   const aiLines = Array.from(root.querySelectorAll(".lead-demo-ai-line"));
+  const ctaWrap = root.querySelector(".lead-demo-cta-wrap");
+  const cta = document.getElementById("leadDemoCta");
   const bars = Array.from(root.querySelectorAll(".lead-demo-chart-bar"));
   const rows = Array.from(root.querySelectorAll(".lead-demo-row[data-status]"));
 
   const CHAT_STAGGER = 550;
-  const CHART_DELAY = 500;
+  const CTA_DELAY = 400;
+  const CTA_READ_DELAY = 1400;
+  const PRESS_DURATION = 160;
+  const SCREEN_TRANSITION = 350;
+  const CHART_DELAY = 350;
   const BAR_STAGGER = 70;
   const ROW_START_GAP = 500;
   const ROW_STAGGER = 650;
@@ -216,18 +224,73 @@
 
   let playing = false;
   let autoplayTimer = null;
+  let advanceTimer = null;
+
+  function showScreen(screen) {
+    screen.classList.add("is-shown");
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => screen.classList.add("is-active"));
+    });
+  }
+
+  function hideScreen(screen) {
+    screen.classList.remove("is-active");
+    setTimeout(() => screen.classList.remove("is-shown"), SCREEN_TRANSITION);
+  }
 
   function reset() {
+    clearTimeout(advanceTimer);
     if (userMsg) userMsg.classList.remove("is-visible");
     aiLines.forEach((line) => line.classList.remove("is-visible"));
+    if (ctaWrap) ctaWrap.classList.remove("is-visible");
+    if (cta) cta.classList.remove("is-pressed");
     bars.forEach((bar) => (bar.style.height = "0%"));
     rows.forEach((row) => row.classList.remove("is-visible"));
+    leadsScreen.classList.remove("is-active", "is-shown");
+    chatScreen.classList.remove("is-active");
+    chatScreen.classList.add("is-shown");
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => chatScreen.classList.add("is-active"));
+    });
   }
 
   function scheduleAutoplay() {
     if (reduceMotion) return;
     clearTimeout(autoplayTimer);
     autoplayTimer = setTimeout(playSequence, LOOP_GAP);
+  }
+
+  function goToLeadsScreen() {
+    if (!playing) return;
+    clearTimeout(advanceTimer);
+
+    cta.classList.add("is-pressed");
+
+    setTimeout(() => {
+      cta.classList.remove("is-pressed");
+      hideScreen(chatScreen);
+      showScreen(leadsScreen);
+
+      setTimeout(() => {
+        bars.forEach((bar, i) => {
+          setTimeout(() => {
+            bar.style.height = `${(Number(bar.dataset.value) / 18) * 100}%`;
+          }, i * BAR_STAGGER);
+        });
+      }, SCREEN_TRANSITION + CHART_DELAY);
+
+      const rowsStart = SCREEN_TRANSITION + CHART_DELAY + bars.length * BAR_STAGGER + ROW_START_GAP;
+
+      rows.forEach((row, i) => {
+        setTimeout(() => row.classList.add("is-visible"), rowsStart + i * ROW_STAGGER);
+      });
+
+      setTimeout(() => {
+        playing = false;
+        reset();
+        scheduleAutoplay();
+      }, rowsStart + rows.length * ROW_STAGGER + HOLD_DURATION);
+    }, PRESS_DURATION);
   }
 
   function playSequence() {
@@ -244,27 +307,21 @@
 
     const chatDuration = chatSteps.length * CHAT_STAGGER;
 
-    setTimeout(() => {
-      bars.forEach((bar, i) => {
-        setTimeout(() => {
-          bar.style.height = `${(Number(bar.dataset.value) / 18) * 100}%`;
-        }, i * BAR_STAGGER);
-      });
-    }, chatDuration + CHART_DELAY);
+    setTimeout(() => ctaWrap.classList.add("is-visible"), chatDuration + CTA_DELAY);
 
-    const rowsStart = chatDuration + CHART_DELAY + bars.length * BAR_STAGGER + ROW_START_GAP;
-
-    rows.forEach((row, i) => {
-      setTimeout(() => row.classList.add("is-visible"), rowsStart + i * ROW_STAGGER);
-    });
-
-    setTimeout(() => {
-      playing = false;
-      scheduleAutoplay();
-    }, rowsStart + rows.length * ROW_STAGGER + HOLD_DURATION + RESET_GAP);
+    advanceTimer = setTimeout(goToLeadsScreen, chatDuration + CTA_DELAY + CTA_READ_DELAY);
   }
 
-  root.addEventListener("click", playSequence);
+  if (cta) {
+    cta.addEventListener("click", (e) => {
+      e.stopPropagation();
+      goToLeadsScreen();
+    });
+  }
+
+  root.addEventListener("click", () => {
+    if (!playing) playSequence();
+  });
 
   if (!reduceMotion) {
     const observer = new IntersectionObserver(
