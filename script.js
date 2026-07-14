@@ -198,37 +198,30 @@
   const root = document.getElementById("leadDemo");
   if (!root) return;
 
+  const userMsg = root.querySelector(".lead-demo-user-msg");
+  const aiLines = Array.from(root.querySelectorAll(".lead-demo-ai-line"));
+  const bars = Array.from(root.querySelectorAll(".lead-demo-chart-bar"));
   const rows = Array.from(root.querySelectorAll(".lead-demo-row[data-status]"));
-  const totalEl = document.getElementById("leadStatTotal");
-  const doneEl = document.getElementById("leadStatDone");
-  const progressEl = document.getElementById("leadStatProgress");
 
+  const CHAT_STAGGER = 550;
+  const CHART_DELAY = 500;
+  const BAR_STAGGER = 70;
+  const ROW_START_GAP = 500;
   const ROW_STAGGER = 650;
   const HOLD_DURATION = 3200;
   const RESET_GAP = 900;
   const LOOP_GAP = 1400;
-  const BUMP_DURATION = 220;
 
   const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   let playing = false;
-  let timers = [];
   let autoplayTimer = null;
 
-  function bump(el, value) {
-    el.textContent = String(value);
-    el.classList.remove("is-bump");
-    // force reflow so the class can be re-added to replay the animation
-    void el.offsetWidth;
-    el.classList.add("is-bump");
-    setTimeout(() => el.classList.remove("is-bump"), BUMP_DURATION);
-  }
-
   function reset() {
+    if (userMsg) userMsg.classList.remove("is-visible");
+    aiLines.forEach((line) => line.classList.remove("is-visible"));
+    bars.forEach((bar) => (bar.style.height = "0%"));
     rows.forEach((row) => row.classList.remove("is-visible"));
-    totalEl.textContent = "0";
-    doneEl.textContent = "0";
-    progressEl.textContent = "0";
   }
 
   function scheduleAutoplay() {
@@ -243,31 +236,32 @@
     clearTimeout(autoplayTimer);
     reset();
 
-    let total = 0;
-    let done = 0;
-    let progress = 0;
-
-    rows.forEach((row, i) => {
-      const t = setTimeout(() => {
-        row.classList.add("is-visible");
-        total += 1;
-        bump(totalEl, total);
-        if (row.dataset.status === "done") {
-          done += 1;
-          bump(doneEl, done);
-        } else {
-          progress += 1;
-          bump(progressEl, progress);
-        }
-      }, i * ROW_STAGGER);
-      timers.push(t);
+    const chatSteps = [userMsg, ...aiLines];
+    chatSteps.forEach((el, i) => {
+      if (!el) return;
+      setTimeout(() => el.classList.add("is-visible"), i * CHAT_STAGGER);
     });
 
-    const finalTimer = setTimeout(() => {
+    const chatDuration = chatSteps.length * CHAT_STAGGER;
+
+    setTimeout(() => {
+      bars.forEach((bar, i) => {
+        setTimeout(() => {
+          bar.style.height = `${(Number(bar.dataset.value) / 18) * 100}%`;
+        }, i * BAR_STAGGER);
+      });
+    }, chatDuration + CHART_DELAY);
+
+    const rowsStart = chatDuration + CHART_DELAY + bars.length * BAR_STAGGER + ROW_START_GAP;
+
+    rows.forEach((row, i) => {
+      setTimeout(() => row.classList.add("is-visible"), rowsStart + i * ROW_STAGGER);
+    });
+
+    setTimeout(() => {
       playing = false;
       scheduleAutoplay();
-    }, rows.length * ROW_STAGGER + HOLD_DURATION + RESET_GAP);
-    timers.push(finalTimer);
+    }, rowsStart + rows.length * ROW_STAGGER + HOLD_DURATION + RESET_GAP);
   }
 
   root.addEventListener("click", playSequence);
