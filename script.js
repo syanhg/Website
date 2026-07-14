@@ -101,13 +101,10 @@
   requestAnimationFrame(tick);
 })();
 
-(function () {
-  const slogan = document.querySelector(".hero-slogan");
-  if (!slogan) return;
-
-  const text = slogan.textContent;
-  slogan.textContent = "";
-  slogan.setAttribute("aria-label", text);
+function wrapLetters(el) {
+  const text = el.textContent;
+  el.textContent = "";
+  el.setAttribute("aria-label", text);
 
   const letterEls = [];
   const words = text.split(" ");
@@ -124,20 +121,54 @@
       letterEls.push(letterEl);
     });
 
-    slogan.appendChild(wordEl);
+    el.appendChild(wordEl);
     if (wordIndex < words.length - 1) {
-      slogan.appendChild(document.createTextNode(" "));
+      el.appendChild(document.createTextNode(" "));
     }
   });
 
-  const LETTER_DELAY = 38;
-  const START_DELAY = 200;
+  return letterEls;
+}
 
+function revealLetters(letterEls, { letterDelay = 38, startDelay = 200 } = {}) {
   letterEls.forEach((letterEl, i) => {
     setTimeout(() => {
       letterEl.classList.add("is-visible");
-    }, START_DELAY + i * LETTER_DELAY);
+    }, startDelay + i * letterDelay);
   });
+}
+
+(function () {
+  const slogan = document.querySelector(".hero-slogan");
+  if (!slogan) return;
+
+  revealLetters(wrapLetters(slogan));
+})();
+
+(function () {
+  const titles = Array.from(document.querySelectorAll(".product-text h3"));
+  if (!titles.length) return;
+
+  const pending = titles.map((el) => ({ el, letterEls: wrapLetters(el) }));
+
+  if (!("IntersectionObserver" in window)) {
+    pending.forEach(({ letterEls }) => revealLetters(letterEls));
+    return;
+  }
+
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        const match = pending.find((item) => item.el === entry.target);
+        if (match) revealLetters(match.letterEls);
+        observer.unobserve(entry.target);
+      });
+    },
+    { threshold: 0.4 }
+  );
+
+  pending.forEach(({ el }) => observer.observe(el));
 })();
 
 (function () {

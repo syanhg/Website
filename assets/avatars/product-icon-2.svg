@@ -18,35 +18,47 @@
       <rect x="-33.625" y="-33.625" width="67.250" height="67.250" rx="12.270" fill="none" stroke="#fee9f5" stroke-width="4.000" opacity="0.18" filter="url(#blur-5)"/>
     </g>
     <g>
-      <animateTransform attributeName="transform" type="translate" values="0,0; 3,-4; -2,3; 0,0" dur="7s" repeatCount="indefinite" calcMode="spline" keySplines="0.45 0 0.55 1;0.45 0 0.55 1;0.45 0 0.55 1" keyTimes="0;0.33;0.66;1"/>
+      <animateTransform attributeName="transform" type="translate" values="0,0; 6,-7; -5,6; 0,0" dur="7s" repeatCount="indefinite" calcMode="spline" keySplines="0.45 0 0.55 1;0.45 0 0.55 1;0.45 0 0.55 1" keyTimes="0;0.33;0.66;1"/>
       <g transform="translate(65.213 65.082) rotate(44.955)">
-        <rect x="-45.765" y="-45.598" width="91.529" height="91.195" rx="46.023" fill="#ff6d5c" opacity="0.857" filter="url(#blur-3)">
-          <animate attributeName="rx" values="46.023;30;58;46.023" dur="8s" repeatCount="indefinite"/>
-        </rect>
+        <g>
+          <animateTransform attributeName="transform" type="scale" values="1,1; 1.3,0.78; 0.8,1.28; 1,1" dur="8s" repeatCount="indefinite" calcMode="spline" keySplines="0.45 0 0.55 1;0.45 0 0.55 1;0.45 0 0.55 1" keyTimes="0;0.33;0.66;1"/>
+          <rect x="-45.765" y="-45.598" width="91.529" height="91.195" rx="46.023" fill="#ff6d5c" opacity="0.857" filter="url(#blur-3)">
+            <animate attributeName="rx" values="46.023;18;70;46.023" dur="8s" repeatCount="indefinite"/>
+          </rect>
+        </g>
       </g>
     </g>
     <g>
-      <animateTransform attributeName="transform" type="translate" values="0,0; -4,3; 2,-3; 0,0" dur="9s" repeatCount="indefinite" calcMode="spline" keySplines="0.45 0 0.55 1;0.45 0 0.55 1;0.45 0 0.55 1" keyTimes="0;0.33;0.66;1"/>
+      <animateTransform attributeName="transform" type="translate" values="0,0; -7,6; 5,-6; 0,0" dur="9s" repeatCount="indefinite" calcMode="spline" keySplines="0.45 0 0.55 1;0.45 0 0.55 1;0.45 0 0.55 1" keyTimes="0;0.33;0.66;1"/>
       <g transform="translate(-1.246 -0.947) rotate(45.185)">
-        <rect x="-45.633" y="-45.487" width="91.266" height="90.975" rx="45.912" fill="#ff6d5c" opacity="0.857" filter="url(#blur-3)">
-          <animate attributeName="rx" values="45.912;60;28;45.912" dur="6.5s" repeatCount="indefinite"/>
-        </rect>
+        <g>
+          <animateTransform attributeName="transform" type="scale" values="1,1; 0.78,1.3; 1.28,0.8; 1,1" dur="6.5s" repeatCount="indefinite" calcMode="spline" keySplines="0.45 0 0.55 1;0.45 0 0.55 1;0.45 0 0.55 1" keyTimes="0;0.33;0.66;1"/>
+          <rect x="-45.633" y="-45.487" width="91.266" height="90.975" rx="45.912" fill="#ff6d5c" opacity="0.857" filter="url(#blur-3)">
+            <animate attributeName="rx" values="45.912;72;16;45.912" dur="6.5s" repeatCount="indefinite"/>
+          </rect>
+        </g>
       </g>
     </g>
     <g>
-      <animateTransform attributeName="transform" type="translate" values="0,0; 3,3; -3,-2; 0,0" dur="8s" repeatCount="indefinite" calcMode="spline" keySplines="0.45 0 0.55 1;0.45 0 0.55 1;0.45 0 0.55 1" keyTimes="0;0.33;0.66;1"/>
+      <animateTransform attributeName="transform" type="translate" values="0,0; 5,5; -6,-4; 0,0" dur="8s" repeatCount="indefinite" calcMode="spline" keySplines="0.45 0 0.55 1;0.45 0 0.55 1;0.45 0 0.55 1" keyTimes="0;0.33;0.66;1"/>
       <g transform="translate(62.974 63.425) rotate(-134.913)">
-        <rect x="-37.989" y="-38.265" width="75.977" height="76.529" rx="37.939" fill="url(#hot-pi2)" opacity="0.901" filter="url(#blur-1)">
-          <animate attributeName="rx" values="37.939;20;50;37.939" dur="7.5s" repeatCount="indefinite"/>
-        </rect>
+        <g>
+          <animateTransform attributeName="transform" type="scale" values="1,1; 1.25,0.8; 0.8,1.25; 1,1" dur="7.5s" repeatCount="indefinite" calcMode="spline" keySplines="0.45 0 0.55 1;0.45 0 0.55 1;0.45 0 0.55 1" keyTimes="0;0.33;0.66;1"/>
+          <rect x="-37.989" y="-38.265" width="75.977" height="76.529" rx="37.939" fill="url(#hot-pi2)" opacity="0.901" filter="url(#blur-1)">
+            <animate attributeName="rx" values="37.939;12;58;37.939" dur="7.5s" repeatCount="indefinite"/>
+          </rect>
+        </g>
       </g>
     </g>
     <g>
-      <animateTransform attributeName="transform" type="translate" values="0,0; -3,-3; 3,2; 0,0" dur="6s" repeatCount="indefinite" calcMode="spline" keySplines="0.45 0 0.55 1;0.45 0 0.55 1;0.45 0 0.55 1" keyTimes="0;0.33;0.66;1"/>
+      <animateTransform attributeName="transform" type="translate" values="0,0; -5,-5; 6,4; 0,0" dur="6s" repeatCount="indefinite" calcMode="spline" keySplines="0.45 0 0.55 1;0.45 0 0.55 1;0.45 0 0.55 1" keyTimes="0;0.33;0.66;1"/>
       <g transform="translate(0.727 0.440) rotate(44.855)">
-        <rect x="-38.361" y="-38.222" width="76.723" height="76.444" rx="37.957" fill="url(#hot-pi2)" opacity="0.897" filter="url(#blur-1)">
-          <animate attributeName="rx" values="37.957;52;22;37.957" dur="9.5s" repeatCount="indefinite"/>
-        </rect>
+        <g>
+          <animateTransform attributeName="transform" type="scale" values="1,1; 0.8,1.25; 1.25,0.8; 1,1" dur="9.5s" repeatCount="indefinite" calcMode="spline" keySplines="0.45 0 0.55 1;0.45 0 0.55 1;0.45 0 0.55 1" keyTimes="0;0.33;0.66;1"/>
+          <rect x="-38.361" y="-38.222" width="76.723" height="76.444" rx="37.957" fill="url(#hot-pi2)" opacity="0.897" filter="url(#blur-1)">
+            <animate attributeName="rx" values="37.957;60;10;37.957" dur="9.5s" repeatCount="indefinite"/>
+          </rect>
+        </g>
       </g>
     </g>
     </g></g>
