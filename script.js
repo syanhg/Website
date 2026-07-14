@@ -202,19 +202,15 @@
   const btnText = root.querySelector(".ai-demo-btn-text");
   const outputText = root.querySelector(".ai-demo-output-text");
   const cursor = root.querySelector(".ai-demo-cursor");
-  const result = root.querySelector(".ai-demo-result");
-  const barFill = root.querySelector(".ai-demo-result-bar-fill");
 
-  const OUTPUT = "35세 고객님의 데이터를 분석해 최적의 보장을 설계했습니다.";
+  const OUTPUT = "35세 고객님께 종신보험 3천만원 + 실손의료비 특약을 추천드립니다.";
   const DEFAULT_LABEL = btnText.textContent;
   const LOADING_LABEL = "분석 중";
-  const MATCH_WIDTH = "96%";
 
   const PRESS_DURATION = 160;
   const THINK_DURATION = 700;
   const CHAR_DELAY = 32;
-  const REVEAL_GAP = 300;
-  const HOLD_DURATION = 3400;
+  const HOLD_DURATION = 2600;
   const LOOP_GAP = 1600;
 
   const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -237,8 +233,6 @@
     cursor.classList.remove("is-active");
     btnText.textContent = DEFAULT_LABEL;
     btn.disabled = false;
-    result.classList.remove("is-visible");
-    barFill.style.width = "0%";
   }
 
   function scheduleAutoplay() {
@@ -264,17 +258,10 @@
         outputText.textContent = "";
         typeText(OUTPUT, 0, () => {
           setTimeout(() => {
-            result.classList.add("is-visible");
-            requestAnimationFrame(() => {
-              barFill.style.width = MATCH_WIDTH;
-            });
-
-            setTimeout(() => {
-              reset();
-              playing = false;
-              scheduleAutoplay();
-            }, HOLD_DURATION);
-          }, REVEAL_GAP);
+            reset();
+            playing = false;
+            scheduleAutoplay();
+          }, HOLD_DURATION);
         });
       }, THINK_DURATION);
     }, PRESS_DURATION);
