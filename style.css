@@ -150,14 +150,16 @@ body {
 
 .hero {
   min-height: 100vh;
-  padding-top: 96px;
+  min-height: 100dvh;
+  padding-top: 88px;
+  padding-bottom: 24px;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   justify-content: safe center;
-  gap: 28px;
+  gap: clamp(16px, 3vh, 28px);
 }
 
 .hero-slogan {
@@ -198,8 +200,8 @@ body {
 
 .orbit-stage {
   position: relative;
-  width: min(420px, 78vw);
-  height: min(420px, 78vw);
+  width: min(420px, 78vw, calc(100dvh - 300px));
+  height: min(420px, 78vw, calc(100dvh - 300px));
 }
 
 .orbit-slot {
