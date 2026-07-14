@@ -354,7 +354,10 @@
 
     if (tableMini) {
       t += TABLE_POP_DELAY;
-      setTimeout(() => tableMini.classList.add("is-visible"), t);
+      setTimeout(() => {
+        tableMini.classList.add("is-visible");
+        scrollChatToBottom();
+      }, t);
       t += TABLE_POP_DURATION;
 
       tableWords.forEach((word) => {
@@ -362,8 +365,6 @@
         t += TABLE_WORD_STAGGER;
       });
     }
-
-    setTimeout(scrollChatToBottom, t);
 
     advanceTimer = setTimeout(goToLeadsScreen, t + CTA_READ_DELAY);
   }
