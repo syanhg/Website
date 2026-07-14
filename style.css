@@ -1325,11 +1325,13 @@ body {
 
   .partner-card {
     min-height: 84px;
-    padding: 16px 12px;
+    padding: 14px 10px;
   }
 
-  .partner-logo {
-    height: 30px;
+  .partner-logo,
+  .partner-logo--lg {
+    height: 26px;
+    max-width: 100%;
   }
 
   .products {
@@ -1345,6 +1347,10 @@ body {
 
   .product-meta {
     display: none;
+  }
+
+  .product-text h3 {
+    font-size: 22px;
   }
 
   .product-text p {
