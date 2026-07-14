@@ -343,37 +343,27 @@
       }, t);
     }
     steps.forEach((step) => {
-      setTimeout(() => {
-        step.classList.add("is-visible");
-        scrollChatToBottom();
-      }, t);
+      setTimeout(() => step.classList.add("is-visible"), t);
       t += STEP_STAGGER;
     });
 
     paragraphWords.forEach((word) => {
-      setTimeout(() => {
-        word.classList.add("is-visible");
-        scrollChatToBottom();
-      }, t);
+      setTimeout(() => word.classList.add("is-visible"), t);
       t += WORD_STAGGER;
     });
 
     if (tableMini) {
       t += TABLE_POP_DELAY;
-      setTimeout(() => {
-        tableMini.classList.add("is-visible");
-        scrollChatToBottom();
-      }, t);
+      setTimeout(() => tableMini.classList.add("is-visible"), t);
       t += TABLE_POP_DURATION;
 
       tableWords.forEach((word) => {
-        setTimeout(() => {
-          word.classList.add("is-visible");
-          scrollChatToBottom();
-        }, t);
+        setTimeout(() => word.classList.add("is-visible"), t);
         t += TABLE_WORD_STAGGER;
       });
     }
+
+    setTimeout(scrollChatToBottom, t);
 
     advanceTimer = setTimeout(goToLeadsScreen, t + CTA_READ_DELAY);
   }
