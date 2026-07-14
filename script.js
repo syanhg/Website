@@ -563,3 +563,38 @@ initLeadDemo("leadDemo", "leadScreenChat", "leadScreenLeads", "leadDemoCta");
     }
   });
 })();
+
+(function () {
+  const header = document.querySelector(".site-header");
+  const toggle = header && header.querySelector(".nav-toggle");
+  const panel = header && header.querySelector(".header-right");
+  if (!header || !toggle || !panel) return;
+
+  function setOpen(open) {
+    header.classList.toggle("is-open", open);
+    toggle.setAttribute("aria-expanded", open ? "true" : "false");
+  }
+
+  toggle.addEventListener("click", (e) => {
+    e.stopPropagation();
+    setOpen(!header.classList.contains("is-open"));
+  });
+
+  panel.querySelectorAll("a").forEach((link) => {
+    link.addEventListener("click", () => setOpen(false));
+  });
+
+  document.addEventListener("click", (e) => {
+    if (header.classList.contains("is-open") && !header.contains(e.target)) {
+      setOpen(false);
+    }
+  });
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") setOpen(false);
+  });
+
+  window.addEventListener("resize", () => {
+    if (window.innerWidth > 640) setOpen(false);
+  });
+})();

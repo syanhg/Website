@@ -302,12 +302,17 @@
 <body>
   <header class="site-header">
     <a href="index.html" class="logo">HUGRAPH</a>
-    <div class="header-right">
+    <button class="nav-toggle" type="button" aria-label="Menu" aria-expanded="false" aria-controls="headerNav">
+      <span class="nav-toggle-bar"></span>
+      <span class="nav-toggle-bar"></span>
+      <span class="nav-toggle-bar"></span>
+    </button>
+    <div class="header-right" id="headerNav">
       <nav class="nav-links">
         <a href="index.html">Home</a>
         <a href="blog.html">Blog</a>
       </nav>
-      <a href="#" class="contact-btn" data-shortcut="c">
+      <a href="mailto:yunseok.yang@hugraph.com" class="contact-btn" data-shortcut="c">
         Contact
         <span class="contact-btn__badge">C</span>
       </a>
