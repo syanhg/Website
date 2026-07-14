@@ -394,18 +394,13 @@ initLeadDemo("leadDemo", "leadScreenChat", "leadScreenLeads", "leadDemoCta");
   const root = document.getElementById("caseDash");
   if (!root) return;
 
-  const widgets = Array.from(root.querySelectorAll(".case-widget"));
-  const nums = Array.from(root.querySelectorAll(".case-widget-num"));
-  const bars = Array.from(root.querySelectorAll(".case-widget-range-bar"));
-  const hbarFills = Array.from(root.querySelectorAll(".case-widget-hbar-fill"));
+  const cards = Array.from(root.querySelectorAll(".case-approval"));
 
-  const WIDGET_STAGGER = 200;
-  const COUNT_DURATION = 800;
-  const BAR_DELAY = 200;
-  const BAR_STAGGER = 60;
-  const HBAR_DELAY = 250;
-  const HBAR_STAGGER = 120;
-  const HOLD_DURATION = 3000;
+  const CARD_ACTIVE_DELAY = 400;
+  const REVIEW_HOLD = 1300;
+  const PRESS_DURATION = 160;
+  const AFTER_APPROVE_GAP = 500;
+  const HOLD_DURATION = 2000;
   const LOOP_GAP = 1400;
 
   const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -413,31 +408,12 @@ initLeadDemo("leadDemo", "leadScreenChat", "leadScreenLeads", "leadDemoCta");
   let playing = false;
   let autoplayTimer = null;
 
-  function countUp(el) {
-    const target = Number(el.dataset.value);
-    const decimals = Number(el.dataset.decimals) || 0;
-    const start = performance.now();
-
-    function tick(now) {
-      const progress = Math.min(1, (now - start) / COUNT_DURATION);
-      const eased = 1 - Math.pow(1 - progress, 3);
-      const value = target * eased;
-      el.textContent = decimals ? value.toFixed(decimals) : Math.round(value).toLocaleString();
-      if (progress < 1) requestAnimationFrame(tick);
-    }
-    requestAnimationFrame(tick);
-  }
-
   function reset() {
-    widgets.forEach((widget) => widget.classList.remove("is-visible"));
-    nums.forEach((num) => {
-      num.textContent = Number(num.dataset.decimals) ? "0.0" : "0";
+    cards.forEach((card) => {
+      card.removeAttribute("data-state");
+      card.dataset.status = "pending";
+      card.querySelector(".case-approval-badge").textContent = "검토 필요";
     });
-    bars.forEach((bar) => {
-      bar.style.bottom = "0%";
-      bar.style.height = "0%";
-    });
-    hbarFills.forEach((fill) => (fill.style.width = "0%"));
   }
 
   function scheduleAutoplay() {
@@ -446,40 +422,46 @@ initLeadDemo("leadDemo", "leadScreenChat", "leadScreenLeads", "leadDemoCta");
     autoplayTimer = setTimeout(playSequence, LOOP_GAP);
   }
 
+  function approveCard(card, done) {
+    const approveBtn = card.querySelector(".case-approval-btn--approve");
+    approveBtn.classList.add("is-pressed");
+
+    setTimeout(() => {
+      approveBtn.classList.remove("is-pressed");
+      card.dataset.status = "approved";
+      card.querySelector(".case-approval-badge").textContent = "승인됨";
+
+      setTimeout(() => {
+        card.removeAttribute("data-state");
+        done();
+      }, AFTER_APPROVE_GAP);
+    }, PRESS_DURATION);
+  }
+
   function playSequence() {
     if (playing) return;
     playing = true;
     clearTimeout(autoplayTimer);
     reset();
 
-    widgets.forEach((widget, i) => {
-      const delay = i * WIDGET_STAGGER;
+    function step(i) {
+      if (i >= cards.length) {
+        setTimeout(() => {
+          playing = false;
+          reset();
+          scheduleAutoplay();
+        }, HOLD_DURATION);
+        return;
+      }
+
+      const card = cards[i];
       setTimeout(() => {
-        widget.classList.add("is-visible");
-        widget.querySelectorAll(".case-widget-num").forEach(countUp);
-      }, delay);
-    });
+        card.dataset.state = "active";
+        setTimeout(() => approveCard(card, () => step(i + 1)), REVIEW_HOLD);
+      }, CARD_ACTIVE_DELAY);
+    }
 
-    bars.forEach((bar, i) => {
-      setTimeout(() => {
-        bar.style.bottom = `${bar.dataset.bottom}%`;
-        bar.style.height = `${bar.dataset.height}%`;
-      }, BAR_DELAY + i * BAR_STAGGER);
-    });
-
-    hbarFills.forEach((fill, i) => {
-      setTimeout(() => {
-        fill.style.width = `${fill.dataset.width}%`;
-      }, HBAR_DELAY + i * HBAR_STAGGER);
-    });
-
-    const total = WIDGET_STAGGER * widgets.length + Math.max(BAR_DELAY + bars.length * BAR_STAGGER, HBAR_DELAY + hbarFills.length * HBAR_STAGGER);
-
-    setTimeout(() => {
-      playing = false;
-      reset();
-      scheduleAutoplay();
-    }, total + HOLD_DURATION);
+    step(0);
   }
 
   root.addEventListener("click", () => {
