@@ -1259,7 +1259,7 @@ body {
     align-items: stretch;
     gap: 0;
     padding: 96px 24px 44px;
-    background: #000000;
+    background: #14141a;
     opacity: 0;
     pointer-events: none;
     transition: opacity 0.3s ease;
