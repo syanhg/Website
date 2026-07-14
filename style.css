@@ -827,6 +827,23 @@ body {
   .lead-demo-prompt {
     width: 85%;
   }
+
+  .case-approval-title {
+    font-size: 11px;
+  }
+
+  .case-approval-body {
+    font-size: 9.5px;
+  }
+
+  .case-approval-detail {
+    font-size: 9px;
+  }
+
+  .case-approval-badge,
+  .case-approval-btn {
+    font-size: 9px;
+  }
 }
 
 .case-dash {
