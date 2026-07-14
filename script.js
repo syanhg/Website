@@ -193,3 +193,35 @@
 
   observer.observe(sentinel);
 })();
+
+(function () {
+  const shortcutEls = Array.from(document.querySelectorAll("[data-shortcut]"));
+  if (!shortcutEls.length) return;
+
+  const byKey = new Map();
+  shortcutEls.forEach((el) => {
+    byKey.set(el.dataset.shortcut.toLowerCase(), el);
+  });
+
+  function isTypingTarget(el) {
+    if (!el) return false;
+    const tag = el.tagName;
+    return (
+      tag === "INPUT" ||
+      tag === "TEXTAREA" ||
+      tag === "SELECT" ||
+      el.isContentEditable
+    );
+  }
+
+  document.addEventListener("keydown", (e) => {
+    if (e.metaKey || e.ctrlKey || e.altKey) return;
+    if (isTypingTarget(document.activeElement)) return;
+
+    const el = byKey.get(e.key.toLowerCase());
+    if (el) {
+      e.preventDefault();
+      el.click();
+    }
+  });
+})();
