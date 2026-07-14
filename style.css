@@ -41,21 +41,6 @@ body {
   text-transform: uppercase;
   color: #111111;
   text-decoration: none;
-  border-radius: 4px;
-  transition: color 0.35s ease, text-shadow 0.35s ease;
-}
-
-.logo.is-glass {
-  color: rgba(255, 255, 255, 0.92);
-  backdrop-filter: blur(10px) saturate(180%);
-  -webkit-backdrop-filter: blur(10px) saturate(180%);
-  text-shadow: 0 1px 14px rgba(0, 0, 0, 0.18);
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .logo {
-    transition: none;
-  }
 }
 
 .header-right {
