@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64" role="img">
+    <title>Bloom avatar</title>
+    <defs>
+    <filter id="blur-1" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="1.1"/></filter>
+    <filter id="blur-3" x="-55%" y="-55%" width="210%" height="210%"><feGaussianBlur stdDeviation="3.2"/></filter>
+    <filter id="blur-5" x="-70%" y="-70%" width="240%" height="240%"><feGaussianBlur stdDeviation="5.1"/></filter><clipPath id="clip-pi3"><rect width="64" height="64" rx="32" fill="#ffffff"/></clipPath><radialGradient id="edge-pi3" gradientUnits="userSpaceOnUse" cx="32" cy="32" r="32"><stop offset="98.4375%" stop-color="#ffffff"/><stop offset="100%" stop-color="#ffffff" stop-opacity="0"/></radialGradient><mask id="edge-mask-pi3" maskUnits="userSpaceOnUse" maskContentUnits="userSpaceOnUse" x="0" y="0" width="64" height="64" style="mask-type:alpha"><rect width="64" height="64" fill="url(#edge-pi3)"/></mask>
+      <radialGradient id="hot-pi3" cx="102%" cy="50%" r="58%">
+        <stop offset="0%" stop-color="#e90075" stop-opacity="1"/>
+        <stop offset="100%" stop-color="#e90075" stop-opacity="0"/>
+      </radialGradient></defs>
+
+    <g mask="url(#edge-mask-pi3)"><g clip-path="url(#clip-pi3)">
+    <g transform="translate(32.000 32.000) rotate(-90.000)"><rect x="-37.625" y="-37.625" width="75.250" height="75.250" rx="16.270" fill="#ffd9e8" opacity="1.000"/></g>
+
+    <g transform="translate(32 32) rotate(-90)" opacity="0.48">
+      <rect x="-36.425" y="-36.425" width="72.850" height="72.850" rx="15.070" fill="none" stroke="#ffffff" stroke-width="1.400" opacity="0.38" filter="url(#blur-1)"/>
+      <rect x="-35.625" y="-35.625" width="71.250" height="71.250" rx="14.270" fill="none" stroke="#fee9f5" stroke-width="2.400" opacity="0.24" filter="url(#blur-3)"/>
+      <rect x="-33.625" y="-33.625" width="67.250" height="67.250" rx="12.270" fill="none" stroke="#fee9f5" stroke-width="4.000" opacity="0.18" filter="url(#blur-5)"/>
+    </g>
+    <g>
+      <animateTransform attributeName="transform" type="translate" values="0,0; -3,4; 2,-3; 0,0" dur="7.5s" repeatCount="indefinite" calcMode="spline" keySplines="0.45 0 0.55 1;0.45 0 0.55 1;0.45 0 0.55 1" keyTimes="0;0.33;0.66;1"/>
+      <g transform="translate(65.213 65.082) rotate(44.955)">
+        <rect x="-45.765" y="-45.598" width="91.529" height="91.195" rx="46.023" fill="#ff5ea8" opacity="0.857" filter="url(#blur-3)">
+          <animate attributeName="rx" values="46.023;28;56;46.023" dur="8.5s" repeatCount="indefinite"/>
+        </rect>
+      </g>
+    </g>
+    <g>
+      <animateTransform attributeName="transform" type="translate" values="0,0; 4,-3; -3,2; 0,0" dur="6s" repeatCount="indefinite" calcMode="spline" keySplines="0.45 0 0.55 1;0.45 0 0.55 1;0.45 0 0.55 1" keyTimes="0;0.33;0.66;1"/>
+      <g transform="translate(-1.246 -0.947) rotate(45.185)">
+        <rect x="-45.633" y="-45.487" width="91.266" height="90.975" rx="45.912" fill="#ff5ea8" opacity="0.857" filter="url(#blur-3)">
+          <animate attributeName="rx" values="45.912;58;30;45.912" dur="7s" repeatCount="indefinite"/>
+        </rect>
+      </g>
+    </g>
+    <g>
+      <animateTransform attributeName="transform" type="translate" values="0,0; -3,-3; 3,3; 0,0" dur="8s" repeatCount="indefinite" calcMode="spline" keySplines="0.45 0 0.55 1;0.45 0 0.55 1;0.45 0 0.55 1" keyTimes="0;0.33;0.66;1"/>
+      <g transform="translate(62.974 63.425) rotate(-134.913)">
+        <rect x="-37.989" y="-38.265" width="75.977" height="76.529" rx="37.939" fill="url(#hot-pi3)" opacity="0.901" filter="url(#blur-1)">
+          <animate attributeName="rx" values="37.939;50;22;37.939" dur="9s" repeatCount="indefinite"/>
+        </rect>
+      </g>
+    </g>
+    <g>
+      <animateTransform attributeName="transform" type="translate" values="0,0; 3,3; -2,-4; 0,0" dur="6.5s" repeatCount="indefinite" calcMode="spline" keySplines="0.45 0 0.55 1;0.45 0 0.55 1;0.45 0 0.55 1" keyTimes="0;0.33;0.66;1"/>
+      <g transform="translate(0.727 0.440) rotate(44.855)">
+        <rect x="-38.361" y="-38.222" width="76.723" height="76.444" rx="37.957" fill="url(#hot-pi3)" opacity="0.897" filter="url(#blur-1)">
+          <animate attributeName="rx" values="37.957;24;52;37.957" dur="9.5s" repeatCount="indefinite"/>
+        </rect>
+      </g>
+    </g>
+    </g></g>
+  </svg>
