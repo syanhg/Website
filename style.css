@@ -1376,11 +1376,11 @@ body {
 
   .product-text p {
     max-width: none;
-    font-size: 14px;
+    font-size: 11px;
   }
 
   .product-text-desc--dense {
-    font-size: 13px;
+    font-size: 10.5px;
   }
 
   .blog-header {
