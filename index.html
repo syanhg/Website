@@ -64,71 +64,38 @@
     <div class="product-row">
       <div class="product-visual product-visual--fit">
         <div class="lead-demo" id="leadDemo">
-          <div class="lead-demo-header">
-            <div class="lead-demo-title-row">
-              <h4 class="lead-demo-title">가망고객 DB 자동 생성</h4>
-              <span class="lead-demo-badge">AI 상담</span>
-            </div>
-            <p class="lead-demo-subtitle">상담 내용을 분석해 가망고객 DB를 자동으로 구축하고 설계까지 완료합니다.</p>
-          </div>
-
           <div class="lead-demo-screen lead-demo-screen--chat is-shown is-active" id="leadScreenChat">
             <div class="lead-demo-chat">
               <p class="lead-demo-user-msg">라이나생명 플랜의 첨단암치료 보장, 다른 보험사 대비 장단점 알려줘</p>
+              <div class="lead-demo-steps">
+                <p class="lead-demo-steps-trigger">웹 검색 및 라이나생명 보장 비교</p>
+                <div class="lead-demo-steps-content">
+                  <p class="lead-demo-step">고객 질문에서 보험사명과 비교 항목을 분석하는 중...</p>
+                  <p class="lead-demo-step">라이나생명 및 경쟁사 상품 공시자료에서 관련 자료를 검색하는 중...</p>
+                  <div class="lead-demo-sources">
+                    <span class="lead-demo-source"><img class="lead-demo-source-avatar" src="assets/avatars/avatar-1.svg" alt="" width="14" height="14" />Source A</span>
+                    <span class="lead-demo-source"><img class="lead-demo-source-avatar" src="assets/avatars/avatar-2.svg" alt="" width="14" height="14" />Source B</span>
+                    <span class="lead-demo-source"><img class="lead-demo-source-avatar" src="assets/avatars/avatar-3.svg" alt="" width="14" height="14" />Source C</span>
+                  </div>
+                </div>
+              </div>
               <div class="lead-demo-ai-msg">
-                <p class="lead-demo-ai-line lead-demo-ai-line--head">라이나생명 첨단암치료 보장 비교</p>
-                <p class="lead-demo-ai-line">카티(CAR-T) 항암약물치료는 <strong>5,000만원</strong>까지 보장되는 최신 면역세포 치료입니다.</p>
-                <p class="lead-demo-ai-line">표적항암약물치료는 <strong>7,000만원</strong>으로 타사 대비 높은 보장 금액입니다.</p>
+                <p class="lead-demo-ai-line"><strong>라이나생명 첨단암치료 보장 비교.</strong> 카티(CAR-T) 항암약물치료는 <strong>5,000만원</strong>까지 보장되는 최신 면역세포 치료입니다. 표적항암약물치료는 <strong>7,000만원</strong>으로 타사 대비 높은 보장 금액입니다. <strong>다른 보험사 대비 고려할 점,</strong> 현대해상과 DB손해보험은 유사암 진단비를 더 높게 보장하는 편이니 함께 비교해 보시는 것이 좋습니다.</p>
               </div>
             </div>
-            <div class="lead-demo-cta-wrap">
-              <button class="lead-demo-cta" type="button" id="leadDemoCta">
-                <span>가망고객 DB에 저장</span>
-              </button>
+            <div class="lead-demo-prompt-wrap">
+              <div class="lead-demo-prompt" id="leadDemoCta">
+                <span class="lead-demo-prompt-placeholder">메시지를 입력하세요...</span>
+                <span class="lead-demo-prompt-send" aria-hidden="true">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 19V5M12 5L6 11M12 5L18 11" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" />
+                  </svg>
+                </span>
+              </div>
             </div>
           </div>
 
           <div class="lead-demo-screen lead-demo-screen--leads" id="leadScreenLeads">
-            <div class="lead-demo-chart">
-              <p class="lead-demo-chart-title">일별 신규 리드 유입</p>
-              <div class="lead-demo-chart-area">
-                <div class="lead-demo-chart-ylabels">
-                  <span>18</span>
-                  <span>12</span>
-                  <span>6</span>
-                  <span>0</span>
-                </div>
-                <div class="lead-demo-chart-plot">
-                  <div class="lead-demo-chart-grid" aria-hidden="true">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                    <span class="lead-demo-chart-grid-base"></span>
-                  </div>
-                  <div class="lead-demo-chart-bars" id="leadChartBars">
-                    <span class="lead-demo-chart-bar" data-value="2"></span>
-                    <span class="lead-demo-chart-bar" data-value="1"></span>
-                    <span class="lead-demo-chart-bar" data-value="3"></span>
-                    <span class="lead-demo-chart-bar" data-value="2"></span>
-                    <span class="lead-demo-chart-bar" data-value="1"></span>
-                    <span class="lead-demo-chart-bar" data-value="3"></span>
-                    <span class="lead-demo-chart-bar" data-value="2"></span>
-                    <span class="lead-demo-chart-bar" data-value="4"></span>
-                    <span class="lead-demo-chart-bar" data-value="3"></span>
-                    <span class="lead-demo-chart-bar" data-value="6"></span>
-                    <span class="lead-demo-chart-bar" data-value="10"></span>
-                    <span class="lead-demo-chart-bar lead-demo-chart-bar--end" data-value="16"></span>
-                  </div>
-                </div>
-              </div>
-              <div class="lead-demo-chart-axis">
-                <span>7/11</span>
-                <span>7/12</span>
-                <span>7/13</span>
-                <span>오늘</span>
-              </div>
-            </div>
-
             <div class="lead-demo-table">
               <div class="lead-demo-row lead-demo-row--head">
                 <span class="lead-demo-check" aria-hidden="true"></span>

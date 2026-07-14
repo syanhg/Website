@@ -201,23 +201,47 @@
   const chatScreen = document.getElementById("leadScreenChat");
   const leadsScreen = document.getElementById("leadScreenLeads");
   const userMsg = root.querySelector(".lead-demo-user-msg");
+  const steps = Array.from(root.querySelectorAll(".lead-demo-steps-content > *"));
   const aiLines = Array.from(root.querySelectorAll(".lead-demo-ai-line"));
-  const ctaWrap = root.querySelector(".lead-demo-cta-wrap");
   const cta = document.getElementById("leadDemoCta");
-  const bars = Array.from(root.querySelectorAll(".lead-demo-chart-bar"));
   const rows = Array.from(root.querySelectorAll(".lead-demo-row[data-status]"));
 
-  const CHAT_STAGGER = 550;
-  const CTA_DELAY = 400;
+  // Wrap each AI line's text in per-word spans (keeping inline <strong> tags
+  // intact) so the answer can stream in word by word as one continuous
+  // paragraph instead of appearing a whole line at a time.
+  function wrapWords(node) {
+    Array.from(node.childNodes).forEach((child) => {
+      if (child.nodeType === Node.TEXT_NODE) {
+        const frag = document.createDocumentFragment();
+        child.textContent.split(/(\s+)/).forEach((part) => {
+          if (part === "") return;
+          if (/^\s+$/.test(part)) {
+            frag.appendChild(document.createTextNode(part));
+          } else {
+            const span = document.createElement("span");
+            span.className = "lead-demo-word";
+            span.textContent = part;
+            frag.appendChild(span);
+          }
+        });
+        node.replaceChild(frag, child);
+      } else if (child.nodeType === Node.ELEMENT_NODE) {
+        wrapWords(child);
+      }
+    });
+  }
+  aiLines.forEach(wrapWords);
+  const words = Array.from(root.querySelectorAll(".lead-demo-word"));
+
+  const STEPS_START_DELAY = 250;
+  const STEP_STAGGER = 380;
+  const WORD_STAGGER = 55;
   const CTA_READ_DELAY = 1400;
   const PRESS_DURATION = 160;
   const SCREEN_TRANSITION = 350;
-  const CHART_DELAY = 350;
-  const BAR_STAGGER = 70;
-  const ROW_START_GAP = 500;
+  const ROW_START_GAP = 400;
   const ROW_STAGGER = 650;
   const HOLD_DURATION = 3200;
-  const RESET_GAP = 900;
   const LOOP_GAP = 1400;
 
   const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -225,6 +249,18 @@
   let playing = false;
   let autoplayTimer = null;
   let advanceTimer = null;
+
+  function lockHeight() {
+    const measure = (screen) => {
+      const wasShown = screen.classList.contains("is-shown");
+      if (!wasShown) screen.classList.add("is-shown");
+      const h = screen.offsetHeight;
+      if (!wasShown) screen.classList.remove("is-shown");
+      return h;
+    };
+    const tallest = Math.max(measure(chatScreen), measure(leadsScreen));
+    root.style.height = `${tallest}px`;
+  }
 
   function showScreen(screen) {
     screen.classList.add("is-shown");
@@ -241,10 +277,9 @@
   function reset() {
     clearTimeout(advanceTimer);
     if (userMsg) userMsg.classList.remove("is-visible");
-    aiLines.forEach((line) => line.classList.remove("is-visible"));
-    if (ctaWrap) ctaWrap.classList.remove("is-visible");
+    steps.forEach((step) => step.classList.remove("is-visible"));
+    words.forEach((word) => word.classList.remove("is-visible"));
     if (cta) cta.classList.remove("is-pressed");
-    bars.forEach((bar) => (bar.style.height = "0%"));
     rows.forEach((row) => row.classList.remove("is-visible"));
     leadsScreen.classList.remove("is-active", "is-shown");
     chatScreen.classList.remove("is-active");
@@ -271,15 +306,7 @@
       hideScreen(chatScreen);
       showScreen(leadsScreen);
 
-      setTimeout(() => {
-        bars.forEach((bar, i) => {
-          setTimeout(() => {
-            bar.style.height = `${(Number(bar.dataset.value) / 18) * 100}%`;
-          }, i * BAR_STAGGER);
-        });
-      }, SCREEN_TRANSITION + CHART_DELAY);
-
-      const rowsStart = SCREEN_TRANSITION + CHART_DELAY + bars.length * BAR_STAGGER + ROW_START_GAP;
+      const rowsStart = SCREEN_TRANSITION + ROW_START_GAP;
 
       rows.forEach((row, i) => {
         setTimeout(() => row.classList.add("is-visible"), rowsStart + i * ROW_STAGGER);
@@ -299,17 +326,20 @@
     clearTimeout(autoplayTimer);
     reset();
 
-    const chatSteps = [userMsg, ...aiLines];
-    chatSteps.forEach((el, i) => {
-      if (!el) return;
-      setTimeout(() => el.classList.add("is-visible"), i * CHAT_STAGGER);
+    let t = 0;
+    if (userMsg) userMsg.classList.add("is-visible");
+    t += STEPS_START_DELAY;
+
+    steps.forEach((step) => {
+      setTimeout(() => step.classList.add("is-visible"), t);
+      t += STEP_STAGGER;
+    });
+    words.forEach((word) => {
+      setTimeout(() => word.classList.add("is-visible"), t);
+      t += WORD_STAGGER;
     });
 
-    const chatDuration = chatSteps.length * CHAT_STAGGER;
-
-    setTimeout(() => ctaWrap.classList.add("is-visible"), chatDuration + CTA_DELAY);
-
-    advanceTimer = setTimeout(goToLeadsScreen, chatDuration + CTA_DELAY + CTA_READ_DELAY);
+    advanceTimer = setTimeout(goToLeadsScreen, t + CTA_READ_DELAY);
   }
 
   if (cta) {
@@ -322,6 +352,9 @@
   root.addEventListener("click", () => {
     if (!playing) playSequence();
   });
+
+  lockHeight();
+  window.addEventListener("resize", lockHeight);
 
   if (!reduceMotion) {
     const observer = new IntersectionObserver(
