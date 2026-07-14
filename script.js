@@ -342,13 +342,6 @@
     advanceTimer = setTimeout(goToLeadsScreen, t + CTA_READ_DELAY);
   }
 
-  if (cta) {
-    cta.addEventListener("click", (e) => {
-      e.stopPropagation();
-      goToLeadsScreen();
-    });
-  }
-
   root.addEventListener("click", () => {
     if (!playing) playSequence();
   });
