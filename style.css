@@ -605,16 +605,66 @@ body {
 }
 
 .lead-demo-table {
+  position: relative;
   flex: 1;
   min-height: 0;
+  display: flex;
+  flex-direction: column;
   overflow-y: auto;
-  border-top: 1px solid #ececec;
+}
+
+.lead-demo-table::after {
+  content: "";
+  position: absolute;
+  left: calc(50% + 24px);
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: #ececec;
+  pointer-events: none;
+}
+
+.lead-demo-table::before {
+  content: "";
+  position: absolute;
+  left: 52px;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: #ececec;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.lead-demo-col-avatar {
+  flex: 0 0 28px;
+}
+
+.lead-demo-avatar-cell {
+  flex: 0 0 28px;
+  opacity: 0;
+  transform: translateY(4px);
+  transition: opacity 0.45s ease, transform 0.45s ease;
+}
+
+.lead-demo-row.is-visible .lead-demo-avatar-cell {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.lead-demo-avatar-img {
+  display: block;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  object-fit: cover;
 }
 
 .lead-demo-row {
+  flex: 1;
   display: flex;
-  align-items: flex-start;
-  gap: 10px;
+  align-items: center;
+  gap: 20px;
   padding: 14px;
   border-top: 1px solid #ececec;
 }
@@ -624,40 +674,24 @@ body {
 }
 
 .lead-demo-row--head {
+  flex: 0 0 auto;
   align-items: center;
   padding: 14px;
   background: #fafafa;
 }
 
-.lead-demo-col-label {
-  font-size: 9.5px;
-  font-weight: 600;
-  color: #9a9a9a;
-  text-transform: uppercase;
-  letter-spacing: 0.03em;
-  flex: 1.15;
-}
-
+.lead-demo-col-label,
 .lead-demo-col-input {
+  flex: 1;
   font-size: 9.5px;
   font-weight: 600;
   color: #9a9a9a;
   text-transform: uppercase;
   letter-spacing: 0.03em;
-  flex: 1;
-}
-
-.lead-demo-check {
-  flex-shrink: 0;
-  width: 12px;
-  height: 12px;
-  margin-top: 1px;
-  border: 1.5px solid #d8d8d8;
-  border-radius: 3px;
 }
 
 .lead-demo-main {
-  flex: 1.15;
+  flex: 1;
   min-width: 0;
   display: flex;
   flex-direction: column;
@@ -715,6 +749,7 @@ body {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .lead-demo-avatar-cell,
   .lead-demo-main,
   .lead-demo-input {
     transition: none;

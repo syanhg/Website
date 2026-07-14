@@ -331,7 +331,6 @@
 
     let t = 0;
     if (userMsg) userMsg.classList.add("is-visible");
-    scrollChatToBottom();
     t += STEPS_START_DELAY;
 
     const stepsDuration = steps.length * STEP_STAGGER;
