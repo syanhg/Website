@@ -1222,6 +1222,12 @@ body {
 @media (max-width: 640px) {
   .site-header {
     padding: 20px 24px;
+    /* backdrop-filter makes the header the containing block for position:
+       fixed children, which would clip the full-screen menu to the header
+       box. Drop it on mobile so the overlay can fill the viewport. */
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    background: rgba(255, 255, 255, 0.9);
   }
 
   .nav-toggle {
