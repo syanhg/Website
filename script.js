@@ -200,15 +200,17 @@
 
   const chatScreen = document.getElementById("leadScreenChat");
   const leadsScreen = document.getElementById("leadScreenLeads");
+  const chatScroll = root.querySelector(".lead-demo-chat");
   const userMsg = root.querySelector(".lead-demo-user-msg");
-  const steps = Array.from(root.querySelectorAll(".lead-demo-steps-content > *"));
+  const stepsLine = root.querySelector(".lead-demo-steps-line");
+  const steps = Array.from(root.querySelectorAll(".lead-demo-steps-content > .lead-demo-step, .lead-demo-steps-content > .lead-demo-sources"));
   const aiLines = Array.from(root.querySelectorAll(".lead-demo-ai-line"));
+  const tableMini = root.querySelector(".lead-demo-table-mini");
   const cta = document.getElementById("leadDemoCta");
   const rows = Array.from(root.querySelectorAll(".lead-demo-row[data-status]"));
 
-  // Wrap each AI line's text in per-word spans (keeping inline <strong> tags
-  // intact) so the answer can stream in word by word as one continuous
-  // paragraph instead of appearing a whole line at a time.
+  // Wrap text in per-word spans (keeping inline tags like <strong> intact)
+  // so content can stream in word by word instead of appearing all at once.
   function wrapWords(node) {
     Array.from(node.childNodes).forEach((child) => {
       if (child.nodeType === Node.TEXT_NODE) {
@@ -231,13 +233,20 @@
     });
   }
   aiLines.forEach(wrapWords);
-  const words = Array.from(root.querySelectorAll(".lead-demo-word"));
+  const paragraphWords = Array.from(root.querySelectorAll(".lead-demo-ai-line .lead-demo-word"));
+
+  if (tableMini) {
+    tableMini.querySelectorAll("th, td").forEach(wrapWords);
+  }
+  const tableWords = tableMini ? Array.from(tableMini.querySelectorAll(".lead-demo-word")) : [];
 
   const STEPS_START_DELAY = 250;
   const STEP_STAGGER = 380;
   const WORD_STAGGER = 55;
+  const TABLE_POP_DELAY = 300;
+  const TABLE_POP_DURATION = 400;
+  const TABLE_WORD_STAGGER = 45;
   const CTA_READ_DELAY = 1400;
-  const PRESS_DURATION = 160;
   const SCREEN_TRANSITION = 350;
   const ROW_START_GAP = 400;
   const ROW_STAGGER = 650;
@@ -250,16 +259,8 @@
   let autoplayTimer = null;
   let advanceTimer = null;
 
-  function lockHeight() {
-    const measure = (screen) => {
-      const wasShown = screen.classList.contains("is-shown");
-      if (!wasShown) screen.classList.add("is-shown");
-      const h = screen.offsetHeight;
-      if (!wasShown) screen.classList.remove("is-shown");
-      return h;
-    };
-    const tallest = Math.max(measure(chatScreen), measure(leadsScreen));
-    root.style.height = `${tallest}px`;
+  function scrollChatToBottom() {
+    if (chatScroll) chatScroll.scrollTop = chatScroll.scrollHeight;
   }
 
   function showScreen(screen) {
@@ -277,10 +278,17 @@
   function reset() {
     clearTimeout(advanceTimer);
     if (userMsg) userMsg.classList.remove("is-visible");
+    if (stepsLine) {
+      stepsLine.style.transition = "none";
+      stepsLine.style.height = "0%";
+    }
     steps.forEach((step) => step.classList.remove("is-visible"));
-    words.forEach((word) => word.classList.remove("is-visible"));
+    paragraphWords.forEach((word) => word.classList.remove("is-visible"));
+    if (tableMini) tableMini.classList.remove("is-visible");
+    tableWords.forEach((word) => word.classList.remove("is-visible"));
     if (cta) cta.classList.remove("is-pressed");
     rows.forEach((row) => row.classList.remove("is-visible"));
+    if (chatScroll) chatScroll.scrollTop = 0;
     leadsScreen.classList.remove("is-active", "is-shown");
     chatScreen.classList.remove("is-active");
     chatScreen.classList.add("is-shown");
@@ -299,25 +307,20 @@
     if (!playing) return;
     clearTimeout(advanceTimer);
 
-    cta.classList.add("is-pressed");
+    hideScreen(chatScreen);
+    showScreen(leadsScreen);
+
+    const rowsStart = SCREEN_TRANSITION + ROW_START_GAP;
+
+    rows.forEach((row, i) => {
+      setTimeout(() => row.classList.add("is-visible"), rowsStart + i * ROW_STAGGER);
+    });
 
     setTimeout(() => {
-      cta.classList.remove("is-pressed");
-      hideScreen(chatScreen);
-      showScreen(leadsScreen);
-
-      const rowsStart = SCREEN_TRANSITION + ROW_START_GAP;
-
-      rows.forEach((row, i) => {
-        setTimeout(() => row.classList.add("is-visible"), rowsStart + i * ROW_STAGGER);
-      });
-
-      setTimeout(() => {
-        playing = false;
-        reset();
-        scheduleAutoplay();
-      }, rowsStart + rows.length * ROW_STAGGER + HOLD_DURATION);
-    }, PRESS_DURATION);
+      playing = false;
+      reset();
+      scheduleAutoplay();
+    }, rowsStart + rows.length * ROW_STAGGER + HOLD_DURATION);
   }
 
   function playSequence() {
@@ -328,16 +331,49 @@
 
     let t = 0;
     if (userMsg) userMsg.classList.add("is-visible");
+    scrollChatToBottom();
     t += STEPS_START_DELAY;
 
+    const stepsDuration = steps.length * STEP_STAGGER;
+    if (stepsLine) {
+      setTimeout(() => {
+        void stepsLine.offsetWidth;
+        stepsLine.style.transition = `height ${stepsDuration}ms linear`;
+        stepsLine.style.height = "100%";
+      }, t);
+    }
     steps.forEach((step) => {
-      setTimeout(() => step.classList.add("is-visible"), t);
+      setTimeout(() => {
+        step.classList.add("is-visible");
+        scrollChatToBottom();
+      }, t);
       t += STEP_STAGGER;
     });
-    words.forEach((word) => {
-      setTimeout(() => word.classList.add("is-visible"), t);
+
+    paragraphWords.forEach((word) => {
+      setTimeout(() => {
+        word.classList.add("is-visible");
+        scrollChatToBottom();
+      }, t);
       t += WORD_STAGGER;
     });
+
+    if (tableMini) {
+      t += TABLE_POP_DELAY;
+      setTimeout(() => {
+        tableMini.classList.add("is-visible");
+        scrollChatToBottom();
+      }, t);
+      t += TABLE_POP_DURATION;
+
+      tableWords.forEach((word) => {
+        setTimeout(() => {
+          word.classList.add("is-visible");
+          scrollChatToBottom();
+        }, t);
+        t += TABLE_WORD_STAGGER;
+      });
+    }
 
     advanceTimer = setTimeout(goToLeadsScreen, t + CTA_READ_DELAY);
   }
@@ -345,9 +381,6 @@
   root.addEventListener("click", () => {
     if (!playing) playSequence();
   });
-
-  lockHeight();
-  window.addEventListener("resize", lockHeight);
 
   if (!reduceMotion) {
     const observer = new IntersectionObserver(

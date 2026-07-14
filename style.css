@@ -298,10 +298,14 @@ body {
 }
 
 .lead-demo-chat {
+  flex: 1;
+  min-height: 0;
   display: flex;
   flex-direction: column;
   gap: 8px;
   padding: 14px;
+  overflow-y: hidden;
+  scroll-behavior: smooth;
 }
 
 .lead-demo-user-msg {
@@ -363,12 +367,28 @@ body {
 }
 
 .lead-demo-steps-content {
+  position: relative;
   display: flex;
   flex-direction: column;
   gap: 6px;
   padding-left: 10px;
   margin-left: 2px;
-  border-left: 1px solid #e6e6e6;
+}
+
+.lead-demo-steps-line {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 1px;
+  height: 0%;
+  background: #e6e6e6;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lead-demo-steps-line {
+    transition: none !important;
+    height: 100%;
+  }
 }
 
 .lead-demo-step {
@@ -406,6 +426,48 @@ body {
 
 .lead-demo-word.is-visible {
   opacity: 1;
+}
+
+.lead-demo-table-mini {
+  width: 100%;
+  margin-top: 10px;
+  border-collapse: collapse;
+  font-size: 10.5px;
+  opacity: 0;
+  transform: translateY(6px) scale(0.98);
+  transition: opacity 0.4s ease, transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.lead-demo-table-mini.is-visible {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+.lead-demo-table-mini th,
+.lead-demo-table-mini td {
+  border: 1px solid #e2e2e2;
+  padding: 5px 6px;
+  text-align: center;
+  font-weight: 400;
+  color: #6b6b6b;
+}
+
+.lead-demo-table-mini th {
+  font-weight: 700;
+  color: #111111;
+  background: #fafafa;
+}
+
+.lead-demo-table-mini td:first-child,
+.lead-demo-table-mini th:first-child {
+  font-weight: 500;
+  color: #4a4a4a;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lead-demo-table-mini {
+    transition: none;
+  }
 }
 
 .lead-demo-ai-line strong {
@@ -451,9 +513,10 @@ body {
 }
 
 .lead-demo-prompt-wrap {
+  flex-shrink: 0;
   display: flex;
   justify-content: center;
-  padding: 32px 14px 14px;
+  padding: 16px 14px 14px;
 }
 
 .lead-demo-prompt {
@@ -513,6 +576,7 @@ body {
 
 .lead-demo-screen {
   display: none;
+  height: 340px;
   opacity: 0;
   transform: translateY(4px);
   transition: opacity 0.35s ease, transform 0.35s ease;
@@ -540,6 +604,9 @@ body {
 }
 
 .lead-demo-table {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
   border-top: 1px solid #ececec;
 }
 
