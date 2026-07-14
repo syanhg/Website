@@ -325,6 +325,107 @@ body {
   max-width: 380px;
 }
 
+.blog {
+  width: 100%;
+  padding: 40px 0 100px;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.blog-header {
+  padding: 0 48px;
+  text-align: center;
+}
+
+.blog-chip {
+  display: inline-block;
+  padding: 5px 10px;
+  margin-bottom: 14px;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #9a9a9a;
+  background: #f0f0f0;
+  border-radius: 2.5px;
+}
+
+.blog-title {
+  font-size: clamp(24px, 3vw, 32px);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: #111111;
+}
+
+.blog-scroll {
+  display: flex;
+  gap: 24px;
+  overflow-x: auto;
+  padding: 0 48px 8px;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  mask-image: linear-gradient(
+    to right,
+    transparent 0,
+    #000 60px,
+    #000 calc(100% - 60px),
+    transparent 100%
+  );
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent 0,
+    #000 60px,
+    #000 calc(100% - 60px),
+    transparent 100%
+  );
+}
+
+.blog-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.blog-card {
+  flex: 0 0 auto;
+  width: calc((100% - 24px) / 2);
+  scroll-snap-align: start;
+  text-decoration: none;
+  color: inherit;
+}
+
+.blog-card-image {
+  width: 100%;
+  aspect-ratio: 16 / 11;
+  background: #f5f5f5;
+  border-radius: 12px;
+  margin-bottom: 16px;
+}
+
+.blog-card-date {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #b0b0b0;
+  margin-bottom: 8px;
+}
+
+.blog-card-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: #111111;
+  line-height: 1.4;
+  margin-bottom: 8px;
+}
+
+.blog-card-excerpt {
+  font-size: 13px;
+  font-weight: 300;
+  line-height: 1.5;
+  color: #9a9a9a;
+}
+
 .site-footer {
   width: 100%;
   overflow: hidden;
@@ -395,6 +496,11 @@ body {
   color: #b0b0b0;
 }
 
+.footer-glow-sentinel {
+  width: 100%;
+  height: 1px;
+}
+
 .footer-glow {
   width: 100%;
   height: 0;
@@ -450,6 +556,33 @@ body {
 
   .product-text p {
     max-width: none;
+  }
+
+  .blog-header {
+    padding: 0 24px;
+  }
+
+  .blog-scroll {
+    padding: 0 24px 8px;
+    gap: 16px;
+    mask-image: linear-gradient(
+      to right,
+      transparent 0,
+      #000 32px,
+      #000 calc(100% - 32px),
+      transparent 100%
+    );
+    -webkit-mask-image: linear-gradient(
+      to right,
+      transparent 0,
+      #000 32px,
+      #000 calc(100% - 32px),
+      transparent 100%
+    );
+  }
+
+  .blog-card {
+    width: calc((100% - 16px) / 2);
   }
 
   .site-footer {

@@ -131,7 +131,8 @@
 
 (function () {
   const glow = document.getElementById("footerGlow");
-  if (!glow) return;
+  const sentinel = document.getElementById("footerGlowSentinel");
+  if (!glow || !sentinel) return;
 
   const RISE_HEIGHT = 220;
   const RISE_DURATION = 800;
@@ -139,24 +140,12 @@
   const FLATTEN_DURATION = 650;
   const RISE_EASE = "cubic-bezier(0.34, 1.56, 0.64, 1)";
   const FLATTEN_EASE = "cubic-bezier(0.4, 0, 0.2, 1)";
-  const BOTTOM_SLACK = 24;
 
   let playing = false;
-  let armed = true;
-  let atBottom = false;
-
-  function isAtBottom() {
-    const doc = document.documentElement;
-    return (
-      Math.ceil(window.scrollY + window.innerHeight) >=
-      doc.scrollHeight - BOTTOM_SLACK
-    );
-  }
 
   function playSequence() {
-    if (playing || !armed) return;
+    if (playing) return;
     playing = true;
-    armed = false;
 
     glow.style.transition = `height ${RISE_DURATION}ms ${RISE_EASE}`;
     glow.style.height = `${RISE_HEIGHT}px`;
@@ -171,36 +160,25 @@
     }, RISE_DURATION + HOLD_DURATION);
   }
 
-  // 'scroll' fires AFTER the browser applies the new position, so it's the
-  // reliable source of truth for "am I at the bottom right now." 'wheel'
-  // fires BEFORE the scroll it causes is applied, so reading scroll position
-  // live inside the wheel handler can catch a stale, not-yet-at-bottom value
-  // on the very event that lands you there — and once truly pinned at max
-  // scroll, the browser may not fire another wheel event to catch it on.
-  // Caching the state from 'scroll' and reading the cache in 'wheel' avoids
-  // that race.
-  function onScroll() {
-    atBottom = isAtBottom();
-    if (!atBottom) armed = true;
-  }
+  // IntersectionObserver uses the browser's own accurate visibility
+  // hit-testing instead of manual scrollY math, which sidesteps rubber-band
+  // overscroll, fractional-pixel, and cross-input-method precision issues
+  // that made scrollY-based detection unreliable. The sentinel is a stable
+  // 1px marker placed right after the footer content (before the glow), so
+  // its own size never changes — avoiding the earlier feedback-loop bug
+  // from observing the glow (whose height animation was itself changing).
+  let isFirstCallback = true;
 
-  function onWheel(e) {
-    if (e.deltaY > 0 && atBottom) playSequence();
-  }
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (isFirstCallback) return;
+        if (entry.isIntersecting) playSequence();
+      });
+      isFirstCallback = false;
+    },
+    { threshold: 0 }
+  );
 
-  let touchStartY = null;
-  function onTouchStart(e) {
-    touchStartY = e.touches[0].clientY;
-  }
-  function onTouchMove(e) {
-    if (touchStartY === null) return;
-    const movedUp = touchStartY - e.touches[0].clientY;
-    if (movedUp > 12 && atBottom) playSequence();
-  }
-
-  window.addEventListener("scroll", onScroll, { passive: true });
-  window.addEventListener("wheel", onWheel, { passive: true });
-  window.addEventListener("touchstart", onTouchStart, { passive: true });
-  window.addEventListener("touchmove", onTouchMove, { passive: true });
-  onScroll();
+  observer.observe(sentinel);
 })();
