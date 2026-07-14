@@ -807,9 +807,20 @@ body {
     flex-wrap: wrap;
   }
 
+  /* Rows wrap on mobile, so the fixed vertical guide lines and the second
+     header column no longer align with anything — hide them. */
+  .lead-demo-table::before,
+  .lead-demo-table::after {
+    display: none;
+  }
+
+  .lead-demo-col-input {
+    display: none;
+  }
+
   .lead-demo-input {
     flex-basis: 100%;
-    margin-left: 22px;
+    margin-left: 48px;
     -webkit-line-clamp: 3;
   }
 }
